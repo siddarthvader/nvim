@@ -11,13 +11,16 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-
 require("vim-options")
 require("lazy").setup("plugins")
 
-local harpoon = require('plugins.harpoon')
--- basic telescope configuration
+local harpoon = require("harpoon")
+
+-- REQUIRED
 harpoon:setup()
+-- REQUIRED
+
+-- basic telescope configuration
 local conf = require("telescope.config").values
 local function toggle_telescope(harpoon_files)
     local file_paths = {}
@@ -37,12 +40,3 @@ end
 
 vim.keymap.set("n", "<C-e>", function() toggle_telescope(harpoon:list()) end,
     { desc = "Open harpoon window" })
-
-require('telescope').setup{ 
-  defaults = { 
-    file_ignore_patterns = { 
-      "node_modules",'.build','.outout','$houdini','.svelte-kit','.vscode'
-    }
-  }
-}
-
