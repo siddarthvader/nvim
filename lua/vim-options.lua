@@ -32,4 +32,6 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callba
 vim.filetype.add({ extension = { templ = "templ" } })
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format file" }) 
 
+vim.cmd("set number")
+vim.cmd("set relativenumber")
 vim.keymap.set('n', '<leader>ff', "<cmd>lua require'telescope.builtin'.find_files({ find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<cr>", default_opts)
