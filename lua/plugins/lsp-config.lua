@@ -25,7 +25,26 @@ return {
         capabilities = capabilities
       })
       lspconfig.html.setup({
-        capabilities = capabilities
+        capabilities = capabilities,
+        on_attach = on_attach,
+        filetyes = {"html","templ"}
+      })
+      lspconfig.htmx.setup({
+        on_attach = on_attach,
+        capabilities = capabilities,
+        filetypes = { "html", "templ" },
+      })
+      lspconfig.tailwindcss.setup({
+          on_attach = on_attach,
+          capabilities = capabilities,
+          filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+          settings = {
+            tailwindCSS = {
+              includeLanguages = {
+                templ = "html",
+              },
+            },
+          },
       })
       lspconfig.lua_ls.setup({
         capabilities = capabilities
@@ -35,6 +54,13 @@ return {
         capabilities = capabilities
       }
 
+      local servers = {'gopls','ccls','cmake','templ'}
+      for _, lsp in ipairs(servers) do
+        lspconfig[lsp].setup({
+          on_attach = on_attach,
+          capabilities = capabilities,
+        })
+      end
       vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
       vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
       vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})

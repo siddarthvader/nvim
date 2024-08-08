@@ -19,6 +19,7 @@ vim.keymap.set("n", "<c-p>", "<Plug>(YankyPreviousEntry)")
 vim.keymap.set("n", "<c-n>", "<Plug>(YankyNextEntry)")
 
 vim.api.nvim_set_option("clipboard", "unnamed")
+vim.keymap.set("n", "<leader>s", ":w<CR>", { desc = "Save file" })
 
 vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], opts)
 vim.keymap.set("t", "jk", [[<C-\><C-n>]], opts)
@@ -27,3 +28,8 @@ vim.keymap.set("t", "<C-j>", [[<Cmd>wincmd j<CR>]], opts)
 vim.keymap.set("t", "<C-k>", [[<Cmd>wincmd k<CR>]], opts)
 vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], opts)
 vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
+vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = vim.lsp.buf.format })
+vim.filetype.add({ extension = { templ = "templ" } })
+vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format file" }) 
+
+vim.keymap.set('n', '<leader>ff', "<cmd>lua require'telescope.builtin'.find_files({ find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<cr>", default_opts)
