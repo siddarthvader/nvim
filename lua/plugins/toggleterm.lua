@@ -14,8 +14,8 @@ return {
       { "<leader>0", "<Cmd>2ToggleTerm<Cr>", desc = "Terminal #2" },
       {
         "<leader>td",
-        "<cmd>ToggleTerm size=20 dir=./ direction=horizontal<cr>",
-        desc = "Open a horizontal terminal at the Current directory",
+        "<cmd>ToggleTerm size=40 dir=./ direction=horizontal<cr>",
+        desc = "Open a horizontal termnal at the Current directory",
       },
     },
   }
