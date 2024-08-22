@@ -35,7 +35,6 @@ vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], opts)
 vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
 vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = vim.lsp.buf.format })
 vim.filetype.add({ extension = { templ = "templ" } })
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, { desc = "Format file" })
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
 vim.cmd("set number")
 vim.cmd("set relativenumber")
@@ -47,3 +46,4 @@ vim.keymap.set(
   "<cmd>lua require'telescope.builtin'.find_files({ find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<cr>",
   default_opts
 )
+vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true })
