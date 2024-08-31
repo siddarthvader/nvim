@@ -54,7 +54,7 @@ return {
         capabilities = capabilities
       }
 
-      local servers = {'gopls','ccls','cmake','templ'}
+      local servers = {'gopls','ccls','cmake','templ','tsserver'}
       for _, lsp in ipairs(servers) do
         lspconfig[lsp].setup({
           on_attach = on_attach,

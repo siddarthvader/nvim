@@ -36,10 +36,35 @@ vim.keymap.set("t", "<C-j>", [[<Cmd>wincmd j<CR>]], opts)
 vim.keymap.set("t", "<C-k>", [[<Cmd>wincmd k<CR>]], opts)
 vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], opts)
 vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
-vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = vim.lsp.buf.format })
+
+
+local custom_format = function()
+    if vim.bo.filetype == "templ" then
+        local bufnr = vim.api.nvim_get_current_buf()
+        local filename = vim.api.nvim_buf_get_name(bufnr)
+        local cmd = "templ fmt " .. vim.fn.shellescape(filename)
+
+        vim.fn.jobstart(cmd, {
+            on_exit = function()
+                -- Reload the buffer only if it's still the current buffer
+                if vim.api.nvim_get_current_buf() == bufnr then
+                    vim.cmd('e!')
+                end
+            end,
+        })
+    else
+        vim.lsp.buf.format()
+    end
+end
+
+vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = custom_format })
+
 vim.filetype.add({ extension = { templ = "templ" } })
+
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+
 vim.cmd("set number")
+
 vim.cmd("set relativenumber")
 
 
