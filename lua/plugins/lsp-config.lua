@@ -27,12 +27,12 @@ return {
       lspconfig.html.setup({
         capabilities = capabilities,
         on_attach = on_attach,
-        filetyes = {"html","templ"}
+        filetyes = {"html"}
       })
       lspconfig.htmx.setup({
         on_attach = on_attach,
         capabilities = capabilities,
-        filetypes = { "html", "templ" },
+        filetypes = { "htmx" },
       })
       lspconfig.tailwindcss.setup({
           on_attach = on_attach,
