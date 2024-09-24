@@ -21,7 +21,7 @@ return {
     formatters_by_ft = {
       python = { "isort", "black" },
       javascript = { "prettierd", "prettier", stop_after_first = true },
-templ= { "templ" },
+      templ = { "templ" },
     },
     -- Set default options
     default_format_opts = {

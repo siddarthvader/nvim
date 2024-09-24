@@ -21,13 +21,13 @@ return {
       capabilities.textDocument.completion.completionItem.snippetSupport = true
 
       local lspconfig = require("lspconfig")
-      lspconfig.tsserver.setup({
+      lspconfig.ls_ts.setup({
         capabilities = capabilities
       })
       lspconfig.html.setup({
         capabilities = capabilities,
         on_attach = on_attach,
-        filetyes = {"html"}
+        filetyes = { "html" }
       })
       lspconfig.htmx.setup({
         on_attach = on_attach,
@@ -35,26 +35,26 @@ return {
         filetypes = { "htmx" },
       })
       lspconfig.tailwindcss.setup({
-          on_attach = on_attach,
-          capabilities = capabilities,
-          filetypes = { "templ", "astro", "javascript", "typescript", "react" },
-          settings = {
-            tailwindCSS = {
-              includeLanguages = {
-                templ = "html",
-              },
+        on_attach = on_attach,
+        capabilities = capabilities,
+        filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+        settings = {
+          tailwindCSS = {
+            includeLanguages = {
+              templ = "html",
             },
           },
+        },
       })
       lspconfig.lua_ls.setup({
         capabilities = capabilities
       })
-      lspconfig.svelte.setup{}
-      lspconfig.cssls.setup{
+      lspconfig.svelte.setup {}
+      lspconfig.cssls.setup {
         capabilities = capabilities
       }
 
-      local servers = {'gopls','ccls','cmake','templ','tsserver'}
+      local servers = { 'gopls', 'ccls', 'cmake', 'templ', 'ls_ts' }
       for _, lsp in ipairs(servers) do
         lspconfig[lsp].setup({
           on_attach = on_attach,
