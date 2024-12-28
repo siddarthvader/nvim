@@ -1,4 +1,4 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+ local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system({
 		"git",
@@ -78,5 +78,46 @@ vim.keymap.set("n", "<leader>bb", "<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Tel
 -- views can only be fully collapsed with the global statusline
 vim.opt.laststatus = 3
 -- Default splitting will cause your main splits to jump when opening an edgebar.
--- To prevent this, set `splitkeep` to either `screen` or `topline`.
+
 vim.opt.splitkeep = "screen"
+
+
+
+local function keymapOptions(desc)
+    return {
+        noremap = true,
+        silent = true,
+        nowait = true,
+        desc = "GPT prompt " .. desc,
+    }
+end
+
+-- Chat commands
+vim.keymap.set({"n", "i"}, "<leader>cc", "<cmd>GpChatNew<cr>", keymapOptions("New Chat"))
+vim.keymap.set({"n", "i"}, "<leader>ct", "<cmd>GpChatToggle<cr>", keymapOptions("Toggle Chat"))
+vim.keymap.set({"n", "i"}, "<leader>cf", "<cmd>GpChatFinder<cr>", keymapOptions("Chat Finder"))
+vim.keymap.set({"n", "i"}, "<leader>cx", "<cmd>GpChatNew split<cr>", keymapOptions("New Chat split"))
+vim.keymap.set({"n", "i"}, "<leader>cv", "<cmd>GpChatNew vsplit<cr>", keymapOptions("New Chat vsplit"))
+vim.keymap.set({"n", "i"}, "<leader>cT", "<cmd>GpChatNew tabnew<cr>", keymapOptions("New Chat tabnew"))
+
+-- Visual mode mappings
+vim.keymap.set("v", "<leader>cc", ":<C-u>'<,'>GpChatNew<cr>", keymapOptions("Visual Chat New"))
+vim.keymap.set("v", "<leader>cp", ":<C-u>'<,'>GpChatPaste<cr>", keymapOptions("Visual Chat Paste"))
+vim.keymap.set("v", "<leader>ct", ":<C-u>'<,'>GpChatToggle<cr>", keymapOptions("Visual Toggle Chat"))
+
+-- Prompt commands
+vim.keymap.set({"n", "i"}, "<leader>cr", "<cmd>GpRewrite<cr>", keymapOptions("Inline Rewrite"))
+vim.keymap.set({"n", "i"}, "<leader>ca", "<cmd>GpAppend<cr>", keymapOptions("Append (after)"))
+vim.keymap.set({"n", "i"}, "<leader>cb", "<cmd>GpPrepend<cr>", keymapOptions("Prepend (before)"))
+
+-- Window controls
+vim.keymap.set({"n", "i"}, "<leader>gp", "<cmd>GpPopup<cr>", keymapOptions("Popup"))
+vim.keymap.set({"n", "i"}, "<leader>ge", "<cmd>GpEnew<cr>", keymapOptions("GpEnew"))
+vim.keymap.set({"n", "i"}, "<leader>gn", "<cmd>GpNew<cr>", keymapOptions("GpNew"))
+vim.keymap.set({"n", "i"}, "<leader>gv", "<cmd>GpVnew<cr>", keymapOptions("GpVnew"))
+vim.keymap.set({"n", "i"}, "<leader>gt", "<cmd>GpTabnew<cr>", keymapOptions("GpTabnew"))
+
+-- Utility commands 
+vim.keymap.set({"n", "i", "v", "x"}, "<leader>cs", "<cmd>GpStop<cr>", keymapOptions("Stop"))
+vim.keymap.set({"n", "i", "v", "x"}, "<leader>cn", "<cmd>GpNextAgent<cr>", keymapOptions("Next Agent"))
+vim.keymap.set({"n", "i"}, "<leader>cx", "<cmd>GpContext<cr>", keymapOptions("Toggle Context"))

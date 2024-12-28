@@ -65,6 +65,39 @@ This README provides a comprehensive list of custom keymaps defined in your Neov
 - `]d`: Go to next diagnostic
 - `<leader>f`: Format code (already listed under File Operations)
 
+
+
+Here's the updated Neovim Keymap README with the new GPT-related shortcuts:
+markdownCopy# Neovim Keymap README
+
+[Previous sections remain unchanged...]
+
+### GPT Integration Keymaps
+#### Chat Commands
+- `<leader>cc`: New chat
+- `<leader>ct`: Toggle chat window
+- `<leader>cf`: Open chat finder
+- `<leader>cx`: New chat in horizontal split
+- `<leader>cv`: New chat in vertical split
+- `<leader>cT`: New chat in new tab
+
+#### Visual Mode GPT Commands
+- `<leader>cp`: Paste selection into chat
+- `<leader>cr`: Rewrite selected text
+- `<leader>ca`: Append after selection
+- `<leader>cb`: Prepend before selection
+
+#### Window Controls
+- `<leader>gp`: Open in popup
+- `<leader>ge`: Open in new buffer
+- `<leader>gn`: Open in new window
+- `<leader>gv`: Open in vertical split
+- `<leader>gt`: Open in new tab
+
+#### Utility Commands
+- `<leader>cs`: Stop generation
+- `<leader>cn`: Switch to next agent
+- `<leader>cx`: Toggle context
 ## Notes
 
 - The clipboard is set to use the system clipboard (`unnamed`).
