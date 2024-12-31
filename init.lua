@@ -1,13 +1,13 @@
- local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
-	vim.fn.system({
-		"git",
-		"clone",
-		"--filter=blob:none",
-		"https://github.com/folke/lazy.nvim.git",
-		"--branch=stable", -- latest stable release
-		lazypath,
-	})
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
 end
 vim.opt.rtp:prepend(lazypath)
 
@@ -22,55 +22,55 @@ harpoon:setup()
 -- REQUIRED
 
 vim.keymap.set("n", "<leader>a", function()
-	harpoon:list():add()
+  harpoon:list():add()
 end)
 vim.keymap.set("n", "<C-e>", function()
-	harpoon.ui:toggle_quick_menu(harpoon:list())
+  harpoon.ui:toggle_quick_menu(harpoon:list())
 end)
 
 vim.keymap.set("n", "<C-h>", function()
-	harpoon:list():select(1)
+  harpoon:list():select(1)
 end)
 vim.keymap.set("n", "<C-t>", function()
-	harpoon:list():select(2)
+  harpoon:list():select(2)
 end)
 vim.keymap.set("n", "<C-n>", function()
-	harpoon:list():select(3)
+  harpoon:list():select(3)
 end)
 vim.keymap.set("n", "<C-s>", function()
-	harpoon:list():select(4)
+  harpoon:list():select(4)
 end)
 
 -- Toggle previous & next buffers stored within Harpoon list
 vim.keymap.set("n", "<C-S-P>", function()
-	harpoon:list():prev()
+  harpoon:list():prev()
 end)
 vim.keymap.set("n", "<C-S-N>", function()
-	harpoon:list():next()
+  harpoon:list():next()
 end)
 
 -- basic telescope configuration
 local conf = require("telescope.config").values
 local function toggle_telescope(harpoon_files)
-	local file_paths = {}
-	for _, item in ipairs(harpoon_files.items) do
-		table.insert(file_paths, item.value)
-	end
+  local file_paths = {}
+  for _, item in ipairs(harpoon_files.items) do
+    table.insert(file_paths, item.value)
+  end
 
-	require("telescope.pickers")
-		.new({}, {
-			prompt_title = "Harpoon",
-			finder = require("telescope.finders").new_table({
-				results = file_paths,
-			}),
-			previewer = conf.file_previewer({}),
-			sorter = conf.generic_sorter({}),
-		})
-		:find()
+  require("telescope.pickers")
+      .new({}, {
+        prompt_title = "Harpoon",
+        finder = require("telescope.finders").new_table({
+          results = file_paths,
+        }),
+        previewer = conf.file_previewer({}),
+        sorter = conf.generic_sorter({}),
+      })
+      :find()
 end
 
 vim.keymap.set("n", "<C-e>", function()
-	toggle_telescope(harpoon:list())
+  toggle_telescope(harpoon:list())
 end, { desc = "Open harpoon window" })
 
 vim.keymap.set("n", "<leader>bb", "<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>", { silent = true })
@@ -84,40 +84,41 @@ vim.opt.splitkeep = "screen"
 
 
 local function keymapOptions(desc)
-    return {
-        noremap = true,
-        silent = true,
-        nowait = true,
-        desc = "GPT prompt " .. desc,
-    }
+  return {
+    noremap = true,
+    silent = true,
+    nowait = true,
+    desc = "GPT prompt " .. desc,
+  }
 end
 
 -- Chat commands
-vim.keymap.set({"n", "i"}, "<leader>cc", "<cmd>GpChatNew<cr>", keymapOptions("New Chat"))
-vim.keymap.set({"n", "i"}, "<leader>ct", "<cmd>GpChatToggle<cr>", keymapOptions("Toggle Chat"))
-vim.keymap.set({"n", "i"}, "<leader>cf", "<cmd>GpChatFinder<cr>", keymapOptions("Chat Finder"))
-vim.keymap.set({"n", "i"}, "<leader>cx", "<cmd>GpChatNew split<cr>", keymapOptions("New Chat split"))
-vim.keymap.set({"n", "i"}, "<leader>cv", "<cmd>GpChatNew vsplit<cr>", keymapOptions("New Chat vsplit"))
-vim.keymap.set({"n", "i"}, "<leader>cT", "<cmd>GpChatNew tabnew<cr>", keymapOptions("New Chat tabnew"))
-
+-- Visual mode mappings only
+vim.keymap.set("v", "<leader>cc", ":<C-u>'<,'>GpChatNew<cr>", keymapOptions("Visual Chat New"))
+vim.keymap.set("v", "<leader>cp", ":<C-u>'<,'>GpChatPaste<cr>", keymapOptions("Visual Chat Paste"))
+vim.keymap.set("v", "<leader>ct", ":<C-u>'<,'>GpChatToggle<cr>", keymapOptions("Visual Toggle Chat"))
+vim.keymap.set("v", "<leader>cr", ":<C-u>'<,'>GpRewrite<cr>", keymapOptions("Visual Rewrite"))
+vim.keymap.set("v", "<leader>ca", ":<C-u>'<,'>GpAppend<cr>", keymapOptions("Visual Append"))
+vim.keymap.set("v", "<leader>cb", ":<C-u>'<,'>GpPrepend<cr>", keymapOptions("Visual Prepend"))
+vim.keymap.set("v", "<leader>gp", ":<C-u>'<,'>GpPopup<cr>", keymapOptions("Visual Popup"))
 -- Visual mode mappings
 vim.keymap.set("v", "<leader>cc", ":<C-u>'<,'>GpChatNew<cr>", keymapOptions("Visual Chat New"))
 vim.keymap.set("v", "<leader>cp", ":<C-u>'<,'>GpChatPaste<cr>", keymapOptions("Visual Chat Paste"))
 vim.keymap.set("v", "<leader>ct", ":<C-u>'<,'>GpChatToggle<cr>", keymapOptions("Visual Toggle Chat"))
 
 -- Prompt commands
-vim.keymap.set({"n", "i"}, "<leader>cr", "<cmd>GpRewrite<cr>", keymapOptions("Inline Rewrite"))
-vim.keymap.set({"n", "i"}, "<leader>ca", "<cmd>GpAppend<cr>", keymapOptions("Append (after)"))
-vim.keymap.set({"n", "i"}, "<leader>cb", "<cmd>GpPrepend<cr>", keymapOptions("Prepend (before)"))
+vim.keymap.set({ "n", "i" }, "<leader>cr", "<cmd>GpRewrite<cr>", keymapOptions("Inline Rewrite"))
+vim.keymap.set({ "n", "i" }, "<leader>ca", "<cmd>GpAppend<cr>", keymapOptions("Append (after)"))
+vim.keymap.set({ "n", "i" }, "<leader>cb", "<cmd>GpPrepend<cr>", keymapOptions("Prepend (before)"))
 
 -- Window controls
-vim.keymap.set({"n", "i"}, "<leader>gp", "<cmd>GpPopup<cr>", keymapOptions("Popup"))
-vim.keymap.set({"n", "i"}, "<leader>ge", "<cmd>GpEnew<cr>", keymapOptions("GpEnew"))
-vim.keymap.set({"n", "i"}, "<leader>gn", "<cmd>GpNew<cr>", keymapOptions("GpNew"))
-vim.keymap.set({"n", "i"}, "<leader>gv", "<cmd>GpVnew<cr>", keymapOptions("GpVnew"))
-vim.keymap.set({"n", "i"}, "<leader>gt", "<cmd>GpTabnew<cr>", keymapOptions("GpTabnew"))
+vim.keymap.set({ "n", "i" }, "<leader>gp", "<cmd>GpPopup<cr>", keymapOptions("Popup"))
+vim.keymap.set({ "n", "i" }, "<leader>ge", "<cmd>GpEnew<cr>", keymapOptions("GpEnew"))
+vim.keymap.set({ "n", "i" }, "<leader>gn", "<cmd>GpNew<cr>", keymapOptions("GpNew"))
+vim.keymap.set({ "n", "i" }, "<leader>gv", "<cmd>GpVnew<cr>", keymapOptions("GpVnew"))
+vim.keymap.set({ "n", "i" }, "<leader>gt", "<cmd>GpTabnew<cr>", keymapOptions("GpTabnew"))
 
--- Utility commands 
-vim.keymap.set({"n", "i", "v", "x"}, "<leader>cs", "<cmd>GpStop<cr>", keymapOptions("Stop"))
-vim.keymap.set({"n", "i", "v", "x"}, "<leader>cn", "<cmd>GpNextAgent<cr>", keymapOptions("Next Agent"))
-vim.keymap.set({"n", "i"}, "<leader>cx", "<cmd>GpContext<cr>", keymapOptions("Toggle Context"))
+-- Utility commands
+vim.keymap.set({ "n", "i", "v", "x" }, "<leader>cs", "<cmd>GpStop<cr>", keymapOptions("Stop"))
+vim.keymap.set({ "n", "i", "v", "x" }, "<leader>cn", "<cmd>GpNextAgent<cr>", keymapOptions("Next Agent"))
+vim.keymap.set({ "n", "i" }, "<leader>cx", "<cmd>GpContext<cr>", keymapOptions("Toggle Context"))
