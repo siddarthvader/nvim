@@ -18,7 +18,14 @@ require("lazy").setup("plugins")
 local harpoon = require("harpoon")
 
 -- REQUIRED
-harpoon:setup()
+harpoon:setup({
+  settings = {
+    save_on_toggle = true,
+    save_on_change = true,
+    sync_on_ui_close = true,
+    mark_branch = true,
+  }
+})
 -- REQUIRED
 
 vim.keymap.set("n", "<leader>a", function()
@@ -52,21 +59,34 @@ end)
 -- basic telescope configuration
 local conf = require("telescope.config").values
 local function toggle_telescope(harpoon_files)
-  local file_paths = {}
-  for _, item in ipairs(harpoon_files.items) do
-    table.insert(file_paths, item.value)
+  local conf = require("telescope.config").values
+  local function finder()
+    local paths = {}
+    for _, item in ipairs(harpoon_files.items) do
+      table.insert(paths, item.value)
+    end
+    return require("telescope.finders").new_table({
+      results = paths,
+    })
   end
 
-  require("telescope.pickers")
-      .new({}, {
-        prompt_title = "Harpoon",
-        finder = require("telescope.finders").new_table({
-          results = file_paths,
-        }),
-        previewer = conf.file_previewer({}),
-        sorter = conf.generic_sorter({}),
-      })
-      :find()
+  require("telescope.pickers").new({}, {
+    prompt_title = "Harpoon",
+    finder = finder(),
+    previewer = conf.file_previewer({}),
+    sorter = conf.generic_sorter({}),
+    attach_mappings = function(prompt_bufnr, map)
+      map("i", "<C-d>", function()
+        local state = require("telescope.actions.state")
+        local selected_entry = state.get_selected_entry()
+        local current_picker = state.get_current_picker(prompt_bufnr)
+
+        harpoon:list():remove_at(selected_entry.index)
+        current_picker:refresh(finder())
+      end)
+      return true
+    end,
+  }):find()
 end
 
 vim.keymap.set("n", "<C-e>", function()
@@ -83,42 +103,3 @@ vim.opt.splitkeep = "screen"
 
 
 
-local function keymapOptions(desc)
-  return {
-    noremap = true,
-    silent = true,
-    nowait = true,
-    desc = "GPT prompt " .. desc,
-  }
-end
-
--- Chat commands
--- Visual mode mappings only
-vim.keymap.set("v", "<leader>cc", ":<C-u>'<,'>GpChatNew<cr>", keymapOptions("Visual Chat New"))
-vim.keymap.set("v", "<leader>cp", ":<C-u>'<,'>GpChatPaste<cr>", keymapOptions("Visual Chat Paste"))
-vim.keymap.set("v", "<leader>ct", ":<C-u>'<,'>GpChatToggle<cr>", keymapOptions("Visual Toggle Chat"))
-vim.keymap.set("v", "<leader>cr", ":<C-u>'<,'>GpRewrite<cr>", keymapOptions("Visual Rewrite"))
-vim.keymap.set("v", "<leader>ca", ":<C-u>'<,'>GpAppend<cr>", keymapOptions("Visual Append"))
-vim.keymap.set("v", "<leader>cb", ":<C-u>'<,'>GpPrepend<cr>", keymapOptions("Visual Prepend"))
-vim.keymap.set("v", "<leader>gp", ":<C-u>'<,'>GpPopup<cr>", keymapOptions("Visual Popup"))
--- Visual mode mappings
-vim.keymap.set("v", "<leader>cc", ":<C-u>'<,'>GpChatNew<cr>", keymapOptions("Visual Chat New"))
-vim.keymap.set("v", "<leader>cp", ":<C-u>'<,'>GpChatPaste<cr>", keymapOptions("Visual Chat Paste"))
-vim.keymap.set("v", "<leader>ct", ":<C-u>'<,'>GpChatToggle<cr>", keymapOptions("Visual Toggle Chat"))
-
--- Prompt commands
-vim.keymap.set({ "n", "i" }, "<leader>cr", "<cmd>GpRewrite<cr>", keymapOptions("Inline Rewrite"))
-vim.keymap.set({ "n", "i" }, "<leader>ca", "<cmd>GpAppend<cr>", keymapOptions("Append (after)"))
-vim.keymap.set({ "n", "i" }, "<leader>cb", "<cmd>GpPrepend<cr>", keymapOptions("Prepend (before)"))
-
--- Window controls
-vim.keymap.set({ "n", "i" }, "<leader>gp", "<cmd>GpPopup<cr>", keymapOptions("Popup"))
-vim.keymap.set({ "n", "i" }, "<leader>ge", "<cmd>GpEnew<cr>", keymapOptions("GpEnew"))
-vim.keymap.set({ "n", "i" }, "<leader>gn", "<cmd>GpNew<cr>", keymapOptions("GpNew"))
-vim.keymap.set({ "n", "i" }, "<leader>gv", "<cmd>GpVnew<cr>", keymapOptions("GpVnew"))
-vim.keymap.set({ "n", "i" }, "<leader>gt", "<cmd>GpTabnew<cr>", keymapOptions("GpTabnew"))
-
--- Utility commands
-vim.keymap.set({ "n", "i", "v", "x" }, "<leader>cs", "<cmd>GpStop<cr>", keymapOptions("Stop"))
-vim.keymap.set({ "n", "i", "v", "x" }, "<leader>cn", "<cmd>GpNextAgent<cr>", keymapOptions("Next Agent"))
-vim.keymap.set({ "n", "i" }, "<leader>cx", "<cmd>GpContext<cr>", keymapOptions("Toggle Context"))
