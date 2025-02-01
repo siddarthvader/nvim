@@ -4,38 +4,77 @@ return {
   cmd = { "ConformInfo" },
   keys = {
     {
-      -- Customize or remove this keymap to your liking
       "<leader>lf",
       function()
-        require("conform").format({ async = true })
+        -- Save cursor position
+        local cursor_pos = vim.api.nvim_win_get_cursor(0)
+        local view = vim.fn.winsaveview()
+
+        -- Do basic indentation fixes
+        vim.cmd('set expandtab')
+        vim.cmd('retab')
+        vim.cmd('normal! gg=G')
+        vim.cmd([[%s/\s\+$//e]])
+
+        -- Restore cursor position
+        vim.fn.winrestview(view)
+
+        -- Then run formatters
+        require("conform").format({
+          async = true,
+          lsp_fallback = true,
+        })
       end,
       mode = "",
       desc = "Format buffer",
     },
   },
-  -- This will provide type hinting with LuaLS
-  ---@module "conform"
-  ---@type conform.setupOpts
   opts = {
-    -- Define your formatters
     formatters_by_ft = {
-      python = { "isort", "black" },
-      javascript = { "prettierd", "prettier", stop_after_first = true },
+      python = { "ruff_format", "black" }, -- Try ruff first, then black
+      javascript = { "prettierd", "prettier" },
       templ = { "templ" },
     },
-    -- Set default options
-    default_format_opts = {
-      lsp_format = "fallback",
-    },
-    -- Customize formatters
     formatters = {
-      shfmt = {
-        prepend_args = { "-i", "2" },
+      ruff_format = {
+        args = {
+          "--select",
+          "I",
+          "--fix",
+          "-",
+        },
+      },
+      black = {
+        prepend_args = { "--fast", "--line-length=88" },
       },
     },
   },
-  init = function()
-    -- If you want the formatexpr, here is the place to set it
-    vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+  config = function(_, opts)
+    local conform = require("conform")
+    conform.setup(opts)
+
+    -- Setup format on save with cursor position preservation
+    vim.api.nvim_create_autocmd("BufWritePre", {
+      pattern = "*.py",
+      callback = function(args)
+        -- Save cursor position
+        local view = vim.fn.winsaveview()
+
+        -- Do basic indentation fixes
+        vim.cmd('set expandtab')
+        vim.cmd('retab')
+        vim.cmd('normal! gg=G')
+        vim.cmd([[%s/\s\+$//e]])
+
+        -- Restore cursor position
+        vim.fn.winrestview(view)
+
+        -- Then run formatters
+        conform.format({
+          bufnr = args.buf,
+          timeout_ms = 1000,
+        })
+      end,
+    })
   end,
 }
