@@ -11,9 +11,7 @@ return {
         null_ls.builtins.formatting.stylua,
         null_ls.builtins.formatting.prettierd,
         null_ls.builtins.formatting.black,
-        null_ls.builtins.mypy,
-        null_ls.builtins.ruff,
-        require("none-ls.diagnostics.eslint"),
+       require("none-ls.diagnostics.eslint"),
       },
       on_attach = function(client, bufnr)
         if client.supports_method("textDocument/formatting") then

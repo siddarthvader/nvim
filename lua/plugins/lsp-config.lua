@@ -13,7 +13,7 @@ return {
       auto_install = true,
       ensure_installed = {
         "pyright",  -- Python type checker
-        "ruff_lsp", -- Python linter
+        "ruff", -- Python linter
       },
     },
   },
