@@ -3,7 +3,6 @@ return {
   config = function()
     require("lualine").setup({
       options = {
-        theme = "catppuccin-mocha",
         options = {
           lualine_c = { {
             "filename",
