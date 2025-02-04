@@ -50,5 +50,4 @@ vim.cmd("set number")
 vim.cmd("set relativenumber")
 
 
-
-vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true })
+vim.keymap.set("n", "<leader>ff", vim.lsp.buf.format, {})
