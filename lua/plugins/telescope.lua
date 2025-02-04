@@ -18,6 +18,7 @@ return {
             'ent/',
             'dist/',
             '**/dist/',
+            ".venv"
           },
         },
         extensions = {

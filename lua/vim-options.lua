@@ -51,10 +51,4 @@ vim.cmd("set relativenumber")
 
 
 
-vim.keymap.set(
-  "n",
-  "<leader>ff",
-  "<cmd>lua require'telescope.builtin'.find_files({ find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<cr>",
-  default_opts
-)
 vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true })
