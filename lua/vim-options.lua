@@ -58,22 +58,3 @@ vim.keymap.set(
   default_opts
 )
 vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true })
-
-
-vim.api.nvim_create_user_command("FixPythonIndent", function()
-  -- First replace tabs with spaces
-  vim.cmd('set expandtab')
-  vim.cmd('retab')
-
-  -- Fix basic indentation
-  vim.cmd('normal! gg=G')
-
-  -- Remove trailing whitespace
-  vim.cmd([[%s/\s\+$//e]])
-
-  -- Try to format with our formatters
-  require('conform').format({
-    formatters = { "ruff_format", "black" },
-    timeout_ms = 1000,
-  })
-end, { desc = "Fix Python indentation issues" })
