@@ -6,19 +6,6 @@ return {
     {
       "<leader>lf",
       function()
-        -- Save cursor position
-        local cursor_pos = vim.api.nvim_win_get_cursor(0)
-        local view = vim.fn.winsaveview()
-
-        -- Do basic indentation fixes
-        vim.cmd('set expandtab')
-        vim.cmd('retab')
-        vim.cmd('normal! gg=G')
-        vim.cmd([[%s/\s\+$//e]])
-
-        -- Restore cursor position
-        vim.fn.winrestview(view)
-
         -- Then run formatters
         require("conform").format({
           async = true,
