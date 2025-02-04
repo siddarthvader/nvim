@@ -58,6 +58,8 @@ vim.keymap.set(
   default_opts
 )
 vim.keymap.set('n', '<leader>b', '<cmd>BookmarksListAll<CR><cmd>lcl<CR><cmd>Telescope loclist<CR>', { silent = true })
+
+
 vim.api.nvim_create_user_command("FixPythonIndent", function()
   -- First replace tabs with spaces
   vim.cmd('set expandtab')

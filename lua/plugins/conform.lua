@@ -18,22 +18,9 @@ return {
   },
   opts = {
     formatters_by_ft = {
-      python = { "ruff_format", "black" }, -- Try ruff first, then black
+      python = { "black" }, -- Try ruff first, then black
       javascript = { "prettierd", "prettier" },
       templ = { "templ" },
-    },
-    formatters = {
-      ruff_format = {
-        args = {
-          "--select",
-          "I",
-          "--fix",
-          "-",
-        },
-      },
-      black = {
-        prepend_args = { "--fast", "--line-length=88" },
-      },
     },
   },
   config = function(_, opts)
