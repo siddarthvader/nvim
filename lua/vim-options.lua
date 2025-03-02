@@ -39,7 +39,8 @@ vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
 
 
 
-vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = vim.lsp.buf.format })
+-- Disabled auto-formatting on save for templ files
+-- vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = vim.lsp.buf.format })
 
 vim.filetype.add({ extension = { templ = "templ" } })
 
