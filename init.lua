@@ -18,5 +18,5 @@ require("lazy").setup("plugins")
 -- views can only be fully collapsed with the global statusline
 vim.opt.laststatus = 3
 -- Default splitting will cause your main splits to jump when opening an edgebar.
-
+vim.g.go_bin_path = "/usr/local/go/bin"
 vim.opt.splitkeep = "screen"
