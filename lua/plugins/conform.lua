@@ -12,7 +12,7 @@ return {
       c = {},
       css = { "prettierd" },
       fish = { "fish_indent" },
-      go = {},
+      go = { "gofmt" },
       html = { "prettierd" },
       javascript = { "prettierd" },
       javascriptreact = { "prettierd" },
@@ -22,6 +22,7 @@ return {
       nix = { "alejandra" }, --fallback to rnix_lsp
       python = { "ruff_format" },
       sql = { "sql_formatter" },
+      svelte = { "prettierd" },
       typescript = { "prettierd" },
       typescriptreact = { "prettierd" },
       yaml = { "prettierd" },
