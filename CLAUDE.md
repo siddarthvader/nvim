@@ -26,3 +26,9 @@
 - SQL: sql_formatter
 - Nix: alejandra
 - C/C++: clang-format with custom style
+# Linting and LSP
+- JavaScript/TypeScript: Using tsserver for type checking and eslint for linting
+- Go: Using gopls with enhanced static analysis settings and golangci-lint
+- Diagnostics are shown on cursor hover (CursorHold)
+- null-ls is configured with additional linters
+- To manually trigger linting, use the LSP Diagnostic commands
