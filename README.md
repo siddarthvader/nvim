@@ -122,6 +122,32 @@ This README provides a comprehensive list of custom keymaps defined in your Neov
 - `<leader>ug`: Toggle indent guides
 - `<leader>uD`: Toggle dim
 
+### CodeCompanion AI Keymaps
+
+#### Main Commands (`<leader>o` prefix)
+- `<leader>oi`: Open inline assistant (normal and visual mode)
+- `<leader>oc`: Open chat buffer
+- `<leader>ot`: Toggle chat buffer
+- `<leader>om`: Generate command-line
+- `<leader>oa`: Open action palette
+
+#### Visual Mode Commands
+- `<leader>ov`: Add selection to chat
+
+#### Prompt Library Access
+- `<leader>oe`: Explain code (normal and visual mode)
+- `<leader>ou`: Generate unit tests (normal and visual mode)
+- `<leader>of`: Fix code (normal and visual mode)
+- `<leader>ol`: Explain LSP diagnostics (normal and visual mode)
+- `<leader>og`: Generate commit message
+
+#### Code Workflow Commands
+- `<leader>ow`: Code workflow
+- `<leader>od`: Edit-test workflow
+
+#### Custom Prompts
+- `<leader>op`: Custom prompt (normal and visual mode)
+
 ### Editor Settings
 
 - Line numbers are enabled (both absolute and relative)
@@ -129,39 +155,6 @@ This README provides a comprehensive list of custom keymaps defined in your Neov
 - System clipboard is used by default
 - Files with `.templ` extension are automatically formatted on save
 
-Note: Some keybindings may require specific plugins to be installed and configured. The clipboard is set to use the system clipboard (`unnamed`).
-
-Here's the updated Neovim Keymap README with the new GPT-related shortcuts:
-markdownCopy# Neovim Keymap README
-
-[Previous sections remain unchanged...]
-
-### GPT Integration Keymaps
-#### Chat Commands
-- `<leader>cc`: New chat
-- `<leader>ct`: Toggle chat window
-- `<leader>cf`: Open chat finder
-- `<leader>cx`: New chat in horizontal split
-- `<leader>cv`: New chat in vertical split
-- `<leader>cT`: New chat in new tab
-
-#### Visual Mode GPT Commands
-- `<leader>cp`: Paste selection into chat
-- `<leader>cr`: Rewrite selected text
-- `<leader>ca`: Append after selection
-- `<leader>cb`: Prepend before selection
-
-#### Window Controls
-- `<leader>gp`: Open in popup
-- `<leader>ge`: Open in new buffer
-- `<leader>gn`: Open in new window
-- `<leader>gv`: Open in vertical split
-- `<leader>gt`: Open in new tab
-
-#### Utility Commands
-- `<leader>cs`: Stop generation
-- `<leader>cn`: Switch to next agent
-- `<leader>cx`: Toggle context
 ## Notes
 
 - The clipboard is set to use the system clipboard (`unnamed`).
