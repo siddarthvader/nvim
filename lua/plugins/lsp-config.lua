@@ -39,6 +39,17 @@ return {
 						vim.diagnostic.open_float(nil, { focus = false })
 					end,
 				})
+				
+				-- Enhance hover information with more details
+				if client.supports_method("textDocument/hover") then
+					vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+						vim.lsp.handlers.hover, {
+							border = "rounded",
+							max_width = 80,
+							max_height = 30,
+						}
+					)
+				end
 			end
 
 			lspconfig.ts_ls.setup({
@@ -71,7 +82,19 @@ return {
 			lspconfig.eslint.setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
-				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" },
+				settings = {
+					workingDirectory = { mode = "auto" },
+					codeAction = {
+						disableRuleComment = {
+							enable = true,
+							location = "separateLine"
+						},
+						showDocumentation = {
+							enable = true
+						}
+					}
+				}
 			})
 
 			lspconfig.html.setup({
@@ -87,11 +110,12 @@ return {
 			lspconfig.tailwindcss.setup({
 				on_attach = on_attach,
 				capabilities = capabilities,
-				filetypes = { "templ", "astro", "javascript", "typescript", "react" },
+				filetypes = { "templ", "astro", "javascript", "typescript", "react", "svelte" },
 				settings = {
 					tailwindCSS = {
 						includeLanguages = {
 							templ = "html",
+							svelte = "html",
 						},
 					},
 				},
@@ -101,8 +125,26 @@ return {
 				on_attach = on_attach,
 			})
 			lspconfig.svelte.setup({
-				on_attach = on_attach,
 				capabilities = capabilities,
+				on_attach = on_attach,
+				settings = {
+					svelte = {
+						plugin = {
+							typescript = {
+								diagnostics = { enable = true },
+								hover = { enable = true },
+								documentSymbols = { enable = true },
+								completions = { enable = true },
+								codeActions = { enable = true },
+								selectionRange = { enable = true },
+								definitions = { enable = true },
+								references = { enable = true },
+							},
+							css = { diagnostics = { enable = true }, hover = { enable = true } },
+							html = { hover = { enable = true }, documentSymbols = { enable = true } },
+						}
+					}
+				}
 			})
 			lspconfig.cssls.setup({
 				capabilities = capabilities,
@@ -177,7 +219,9 @@ return {
 				})
 			end
 
+			-- Define keymaps for LSP functionality
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
 			vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
 			vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})

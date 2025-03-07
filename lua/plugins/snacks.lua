@@ -9,8 +9,7 @@ return {
     indent = { enabled = true },
     input = { enabled = true },
     notifier = {
-      enabled = true,
-      timeout = 3000,
+      enabled = false, -- Completely disable Snacks notifications to avoid interference with LSP hover
     },
     picker = { enabled = true },
     quickfile = { enabled = true },
@@ -70,7 +69,9 @@ return {
     { "<leader>su",      function() Snacks.picker.undo() end,                                    desc = "Undo History" },
     { "<leader>uC",      function() Snacks.picker.colorschemes() end,                            desc = "Colorschemes" },
     -- LSP
-    { "gd",              function() Snacks.picker.lsp_definitions() end,                         desc = "Goto Definition" },
+    -- Using vim.lsp.buf functions directly instead of Snacks to avoid notification issues
+    -- { "gd",              function() Snacks.picker.lsp_definitions() end,                         desc = "Goto Definition" },
+    -- Also disabling K hover through Snacks as it shows "no info found" notifications
     { "gD",              function() Snacks.picker.lsp_declarations() end,                        desc = "Goto Declaration" },
     { "gr",              function() Snacks.picker.lsp_references() end,                          nowait = true,                        desc = "References" },
     { "gI",              function() Snacks.picker.lsp_implementations() end,                     desc = "Goto Implementation" },
