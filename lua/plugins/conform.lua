@@ -11,6 +11,8 @@ return {
       bash = { "beautysh" },
       c = {},
       css = { "prettierd" },
+      graphql = { "prettierd" },
+      gql= {"prettierd"},
       fish = { "fish_indent" },
       go = { "gofmt" },
       html = { "prettierd" },
@@ -38,7 +40,7 @@ return {
     },
   },
 
-  vim.keymap.set({ "n", "v" }, "<leader>bf", function()
+  vim.keymap.set({ "n", "v" }, "<leader>ff", function()
     require("conform").format({
       lsp_fallback = true,
       async = false,

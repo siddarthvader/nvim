@@ -15,7 +15,6 @@ return {
 				"pyright", -- Python type checker
 				"ruff", -- Python linter
 				"gopls", -- Go language server
-				"tsserver", -- TypeScript/JavaScript server
 				"eslint", -- JavaScript linter
 			},
 		},
@@ -27,28 +26,28 @@ return {
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 			capabilities.textDocument.completion.completionItem.snippetSupport = true
 			local lspconfig = require("lspconfig")
-			
+
 			-- Define on_attach function to ensure it's available for server configs
 			local on_attach = function(client, bufnr)
 				-- Enable completion triggered by <c-x><c-o>
-				vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-				
+				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+
 				-- Show diagnostics on hover
 				vim.api.nvim_create_autocmd("CursorHold", {
 					buffer = bufnr,
 					callback = function()
 						vim.diagnostic.open_float(nil, { focus = false })
-					end
+					end,
 				})
 			end
-			
-			lspconfig.tsserver.setup({
+
+			lspconfig.ts_ls.setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
 				settings = {
 					typescript = {
 						inlayHints = {
-							includeInlayParameterNameHints = 'all',
+							includeInlayParameterNameHints = "all",
 							includeInlayParameterNameHintsWhenArgumentMatchesName = false,
 							includeInlayFunctionParameterTypeHints = true,
 							includeInlayVariableTypeHints = true,
@@ -58,7 +57,7 @@ return {
 					},
 					javascript = {
 						inlayHints = {
-							includeInlayParameterNameHints = 'all',
+							includeInlayParameterNameHints = "all",
 							includeInlayParameterNameHintsWhenArgumentMatchesName = false,
 							includeInlayFunctionParameterTypeHints = true,
 							includeInlayVariableTypeHints = true,
@@ -68,13 +67,13 @@ return {
 					},
 				},
 			})
-			
+
 			lspconfig.eslint.setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
 				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
 			})
-			
+
 			lspconfig.html.setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
@@ -138,7 +137,7 @@ return {
 					},
 				},
 			})
-			
+
 			-- Gopls setup with enhanced settings
 			lspconfig.gopls.setup({
 				on_attach = on_attach,
@@ -161,6 +160,15 @@ return {
 				},
 			})
 
+			lspconfig.graphql.setup({
+				on_attach = on_attach,
+				root_dir = lspconfig.util.root_pattern(".graphqlconfig", ".graphqlrc", "package.json"),
+				flags = {
+					debounce_text_changes = 150,
+				},
+				capabilities = capabilities,
+			})
+
 			local servers = { "ccls", "cmake", "templ" }
 			for _, lsp in ipairs(servers) do
 				lspconfig[lsp].setup({
@@ -168,13 +176,13 @@ return {
 					capabilities = capabilities,
 				})
 			end
-			
+
 			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
 			vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
 			vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
-			
+
 			-- Show diagnostics in a nicer format with borders
 			vim.diagnostic.config({
 				virtual_text = true,
