@@ -16,6 +16,8 @@ return {
 				"ruff", -- Python linter
 				"gopls", -- Go language server
 				"eslint", -- JavaScript linter
+				"svelte", -- Svelte language server
+				"eslint_d", -- Faster ESLint implementation
 			},
 		},
 	},
@@ -150,10 +152,20 @@ return {
 
 			lspconfig.eslint.setup({
 				capabilities = capabilities,
-				on_attach = on_attach,
+				on_attach = function(client, bufnr)
+					-- Run standard on_attach function
+					on_attach(client, bufnr)
+					
+					-- Add keymap to manually run ESLint diagnostics on the current file
+					vim.keymap.set("n", "<leader>el", function()
+						vim.cmd("EslintFixAll")
+						vim.notify("ESLint ran on current file", vim.log.levels.INFO)
+					end, { buffer = bufnr, desc = "Run ESLint on current file" })
+				end,
 				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" },
 				settings = {
 					workingDirectory = { mode = "auto" },
+					run = "onType",  -- Run ESLint as you type
 					codeAction = {
 						disableRuleComment = {
 							enable = true,
@@ -195,7 +207,30 @@ return {
 			})
 			lspconfig.svelte.setup({
 				capabilities = capabilities,
-				on_attach = on_attach,
+				on_attach = function(client, bufnr)
+					-- Run standard on_attach function
+					on_attach(client, bufnr)
+					
+					-- Add enhanced diagnostics display for Svelte files
+					vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI", "CursorMoved"}, {
+						buffer = bufnr,
+						callback = function()
+							vim.diagnostic.open_float(nil, { focus = false })
+						end,
+					})
+					
+					-- Force update diagnostics when saving Svelte files
+					vim.api.nvim_create_autocmd("BufWritePost", {
+						buffer = bufnr,
+						callback = function()
+							vim.diagnostic.reset(bufnr)
+							vim.defer_fn(function()
+								vim.lsp.buf.document_highlight()
+								vim.diagnostic.show()
+							end, 100)
+						end,
+					})
+				end,
 				settings = {
 					svelte = {
 						plugin = {
