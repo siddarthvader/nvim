@@ -100,6 +100,7 @@ This README provides a comprehensive list of custom keymaps defined in your Neov
 ### LSP Keymaps
 
 - `K`: Hover information
+- `<leader>d`: Show diagnostics at cursor
 - `gd`: Go to definition
 - `gD`: Go to declaration
 - `gr`: Go to references

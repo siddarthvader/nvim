@@ -32,24 +32,93 @@ return {
 				-- Enable completion triggered by <c-x><c-o>
 				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
-				-- Show diagnostics on hover
-				vim.api.nvim_create_autocmd("CursorHold", {
-					buffer = bufnr,
-					callback = function()
-						vim.diagnostic.open_float(nil, { focus = false })
-					end,
-				})
-				
 				-- Enhance hover information with more details
 				if client.supports_method("textDocument/hover") then
-					vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
-						vim.lsp.handlers.hover, {
-							border = "rounded",
-							max_width = 80,
-							max_height = 30,
-						}
-					)
+					vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+						border = "rounded",
+						max_width = 80,
+						max_height = 30,
+					})
 				end
+
+				-- Create a command to show diagnostics at current line
+				vim.api.nvim_buf_create_user_command(bufnr, "ShowLineDiagnostics", function()
+					vim.diagnostic.open_float({ border = "rounded", focus = false })
+				end, { desc = "Show diagnostics at current line" })
+
+				-- Create custom K keybinding to ALWAYS show hover first, diagnostics only as fallback
+				vim.keymap.set("n", "K", function()
+					-- Always try to show hover information first
+					local hover_successful = false
+
+					-- Function to check if hover was successful
+					local check_hover = function()
+						-- If hover failed or returned no info, show diagnostics as fallback
+						if not hover_successful then
+							-- Check for diagnostics at cursor position
+							local line = vim.fn.line(".") - 1
+							local character = vim.fn.col(".") - 1
+							local diagnostics_at_cursor = vim.diagnostic.get(bufnr, {
+								lnum = line,
+								col = character,
+							})
+
+							if #diagnostics_at_cursor > 0 then
+								-- Show diagnostic at cursor position
+								vim.diagnostic.open_float({ border = "rounded", focus = false })
+							else
+								-- If no diagnostic at cursor, show any on the line
+								local line_diagnostics = vim.diagnostic.get(bufnr, { lnum = line })
+								if #line_diagnostics > 0 then
+									vim.diagnostic.open_float({ border = "rounded", focus = false })
+								end
+							end
+						end
+					end
+
+					-- Hook into the hover handler to capture if it was successful
+					local orig_hover_handler = vim.lsp.handlers["textDocument/hover"]
+					vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
+						if
+							result
+							and result.contents
+							and (
+								(type(result.contents) == "string" and result.contents ~= "")
+								or (
+									type(result.contents) == "table"
+									and result.contents.value
+									and result.contents.value ~= ""
+								)
+							)
+						then
+							hover_successful = true
+						end
+						orig_hover_handler(err, result, ctx, config)
+
+						-- Restore original handler
+						vim.lsp.handlers["textDocument/hover"] = orig_hover_handler
+
+						-- If hover failed, show diagnostics
+						if not hover_successful then
+							vim.defer_fn(check_hover, 50)
+						end
+					end
+
+					-- Try hover
+					vim.lsp.buf.hover()
+
+					-- If hover handler wasn't triggered at all, check diagnostics
+					vim.defer_fn(function()
+						if not hover_successful then
+							check_hover()
+						end
+					end, 100)
+				end, { buffer = bufnr, silent = true })
+
+				-- Add a mapping for explicitly showing diagnostics
+				vim.keymap.set("n", "<leader>d", function()
+					vim.diagnostic.open_float({ border = "rounded", focus = false })
+				end, { buffer = bufnr, desc = "Show diagnostics at cursor" })
 			end
 
 			lspconfig.ts_ls.setup({
@@ -88,13 +157,13 @@ return {
 					codeAction = {
 						disableRuleComment = {
 							enable = true,
-							location = "separateLine"
+							location = "separateLine",
 						},
 						showDocumentation = {
-							enable = true
-						}
-					}
-				}
+							enable = true,
+						},
+					},
+				},
 			})
 
 			lspconfig.html.setup({
@@ -142,9 +211,9 @@ return {
 							},
 							css = { diagnostics = { enable = true }, hover = { enable = true } },
 							html = { hover = { enable = true }, documentSymbols = { enable = true } },
-						}
-					}
-				}
+						},
+					},
+				},
 			})
 			lspconfig.cssls.setup({
 				capabilities = capabilities,
@@ -220,7 +289,7 @@ return {
 			end
 
 			-- Define keymaps for LSP functionality
-			vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
+			-- K mapping is now handled in on_attach to show diagnostics or hover info
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
 			vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})
 			vim.keymap.set("n", "<leader>gr", vim.lsp.buf.references, {})
@@ -229,18 +298,36 @@ return {
 
 			-- Show diagnostics in a nicer format with borders
 			vim.diagnostic.config({
-				virtual_text = true,
+				virtual_text = {
+					spacing = 4,
+					prefix = "●",
+					source = "if_many",
+				},
 				signs = true,
 				underline = true,
 				update_in_insert = false,
 				severity_sort = true,
 				float = {
+					focusable = false,
+					style = "minimal",
 					border = "rounded",
 					source = "always",
 					header = "",
 					prefix = "",
+					format = function(diagnostic)
+						-- Enhance the diagnostic message with more information
+						local message = diagnostic.message
+						if diagnostic.code then
+							message = string.format("[%s] %s", diagnostic.code, message)
+						end
+						if diagnostic.source then
+							message = string.format("%s (from %s)", message, diagnostic.source)
+						end
+						return message
+					end,
 				},
 			})
 		end,
 	},
 }
+
