@@ -155,7 +155,7 @@ return {
 				on_attach = function(client, bufnr)
 					-- Run standard on_attach function
 					on_attach(client, bufnr)
-					
+
 					-- Add keymap to manually run ESLint diagnostics on the current file
 					vim.keymap.set("n", "<leader>el", function()
 						vim.cmd("EslintFixAll")
@@ -165,7 +165,7 @@ return {
 				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" },
 				settings = {
 					workingDirectory = { mode = "auto" },
-					run = "onType",  -- Run ESLint as you type
+					run = "onType", -- Run ESLint as you type
 					codeAction = {
 						disableRuleComment = {
 							enable = true,
@@ -210,15 +210,15 @@ return {
 				on_attach = function(client, bufnr)
 					-- Run standard on_attach function
 					on_attach(client, bufnr)
-					
+
 					-- Add enhanced diagnostics display for Svelte files
-					vim.api.nvim_create_autocmd({"CursorHold", "CursorHoldI", "CursorMoved"}, {
+					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI", "CursorMoved" }, {
 						buffer = bufnr,
 						callback = function()
 							vim.diagnostic.open_float(nil, { focus = false })
 						end,
 					})
-					
+
 					-- Force update diagnostics when saving Svelte files
 					vim.api.nvim_create_autocmd("BufWritePost", {
 						buffer = bufnr,
@@ -315,7 +315,36 @@ return {
 				capabilities = capabilities,
 			})
 
-			local servers = { "ccls", "cmake", "templ" }
+			-- Setup for templ with enhanced diagnostics
+			lspconfig.templ.setup({
+				capabilities = capabilities,
+				on_attach = function(client, bufnr)
+					-- Run standard on_attach function
+					on_attach(client, bufnr)
+
+					-- Add enhanced diagnostics display for templ files
+					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI", "CursorMoved" }, {
+						buffer = bufnr,
+						callback = function()
+							vim.diagnostic.open_float(nil, { focus = false })
+						end,
+					})
+
+					-- Force update diagnostics when saving templ files
+					vim.api.nvim_create_autocmd("BufWritePost", {
+						buffer = bufnr,
+						callback = function()
+							vim.diagnostic.reset(bufnr)
+							vim.defer_fn(function()
+								vim.lsp.buf.document_highlight()
+								vim.diagnostic.show()
+							end, 100)
+						end,
+					})
+				end,
+			})
+
+			local servers = { "ccls", "cmake" }
 			for _, lsp in ipairs(servers) do
 				lspconfig[lsp].setup({
 					on_attach = on_attach,
@@ -365,4 +394,3 @@ return {
 		end,
 	},
 }
-
