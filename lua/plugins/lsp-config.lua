@@ -162,7 +162,7 @@ return {
 						vim.notify("ESLint ran on current file", vim.log.levels.INFO)
 					end, { buffer = bufnr, desc = "Run ESLint on current file" })
 				end,
-				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" },
+				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact"},
 				settings = {
 					workingDirectory = { mode = "auto" },
 					run = "onType", -- Run ESLint as you type
@@ -207,45 +207,16 @@ return {
 			})
 			lspconfig.svelte.setup({
 				capabilities = capabilities,
-				on_attach = function(client, bufnr)
-					-- Run standard on_attach function
-					on_attach(client, bufnr)
-
-					-- Add enhanced diagnostics display for Svelte files
-					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI", "CursorMoved" }, {
-						buffer = bufnr,
-						callback = function()
-							vim.diagnostic.open_float(nil, { focus = false })
-						end,
-					})
-
-					-- Force update diagnostics when saving Svelte files
-					vim.api.nvim_create_autocmd("BufWritePost", {
-						buffer = bufnr,
-						callback = function()
-							vim.diagnostic.reset(bufnr)
-							vim.defer_fn(function()
-								vim.lsp.buf.document_highlight()
-								vim.diagnostic.show()
-							end, 100)
-						end,
-					})
-				end,
+				on_attach = on_attach,
 				settings = {
 					svelte = {
 						plugin = {
+							-- Only enable what's really needed
 							typescript = {
 								diagnostics = { enable = true },
-								hover = { enable = true },
-								documentSymbols = { enable = true },
-								completions = { enable = true },
-								codeActions = { enable = true },
-								selectionRange = { enable = true },
 								definitions = { enable = true },
-								references = { enable = true },
+								hover = { enable = true },
 							},
-							css = { diagnostics = { enable = true }, hover = { enable = true } },
-							html = { hover = { enable = true }, documentSymbols = { enable = true } },
 						},
 					},
 				},
@@ -318,30 +289,7 @@ return {
 			-- Setup for templ with enhanced diagnostics
 			lspconfig.templ.setup({
 				capabilities = capabilities,
-				on_attach = function(client, bufnr)
-					-- Run standard on_attach function
-					on_attach(client, bufnr)
-
-					-- Add enhanced diagnostics display for templ files
-					vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI", "CursorMoved" }, {
-						buffer = bufnr,
-						callback = function()
-							vim.diagnostic.open_float(nil, { focus = false })
-						end,
-					})
-
-					-- Force update diagnostics when saving templ files
-					vim.api.nvim_create_autocmd("BufWritePost", {
-						buffer = bufnr,
-						callback = function()
-							vim.diagnostic.reset(bufnr)
-							vim.defer_fn(function()
-								vim.lsp.buf.document_highlight()
-								vim.diagnostic.show()
-							end, 100)
-						end,
-					})
-				end,
+				on_attach = on_attach,
 			})
 
 			local servers = { "ccls", "cmake" }
@@ -360,7 +308,7 @@ return {
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
 
-			-- Show diagnostics in a nicer format with borders
+			-- Centralized diagnostic configuration
 			vim.diagnostic.config({
 				virtual_text = {
 					spacing = 4,
@@ -369,7 +317,7 @@ return {
 				},
 				signs = true,
 				underline = true,
-				update_in_insert = false,
+				update_in_insert = true,  -- Show diagnostics even in insert mode
 				severity_sort = true,
 				float = {
 					focusable = false,

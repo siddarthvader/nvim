@@ -5,19 +5,7 @@ vim.cmd("set shiftwidth=2")
 vim.g.mapleader = " "
 vim.opt.termguicolors = true
 
--- Show diagnostics more aggressively
-vim.diagnostic.config({
-  update_in_insert = true,  -- Show diagnostics even in insert mode
-  virtual_text = true,      -- Show virtual text for all diagnostics
-  float = {
-    focusable = false,
-    style = "minimal",
-    border = "rounded",
-    source = "always",
-    header = "",
-    prefix = "",
-  },
-})
+-- Diagnostic configuration moved to lsp-config.lua
 
 
 -- Navigate vim panes better
