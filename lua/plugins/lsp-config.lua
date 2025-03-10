@@ -125,7 +125,20 @@ return {
 
 			lspconfig.ts_ls.setup({
 				capabilities = capabilities,
-				on_attach = on_attach,
+				on_attach = function(client, bufnr)
+					on_attach(client, bufnr)
+					
+					-- Add refresh completion cache keybinding
+					vim.keymap.set("n", "<leader>rr", function()
+						client.stop()
+						vim.defer_fn(function()
+							client.start()
+							vim.notify("TypeScript server restarted and cache refreshed", vim.log.levels.INFO)
+						end, 1000)
+					end, { buffer = bufnr, desc = "Restart TS server and refresh cache" })
+				end,
+				-- Exclude Svelte files from TypeScript language server
+				filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
 				settings = {
 					typescript = {
 						inlayHints = {
@@ -162,7 +175,7 @@ return {
 						vim.notify("ESLint ran on current file", vim.log.levels.INFO)
 					end, { buffer = bufnr, desc = "Run ESLint on current file" })
 				end,
-				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact"},
+				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
 				settings = {
 					workingDirectory = { mode = "auto" },
 					run = "onType", -- Run ESLint as you type
@@ -207,7 +220,20 @@ return {
 			})
 			lspconfig.svelte.setup({
 				capabilities = capabilities,
-				on_attach = on_attach,
+				on_attach = function(client, bufnr)
+					on_attach(client, bufnr)
+					
+					-- Add refresh completion cache keybinding for Svelte
+					vim.keymap.set("n", "<leader>rs", function()
+						client.stop()
+						vim.defer_fn(function()
+							client.start()
+							vim.notify("Svelte server restarted and cache refreshed", vim.log.levels.INFO)
+						end, 1000)
+					end, { buffer = bufnr, desc = "Restart Svelte server and refresh cache" })
+				end,
+				-- Explicitly configure to handle only Svelte files
+				filetypes = { "svelte" },
 				settings = {
 					svelte = {
 						plugin = {

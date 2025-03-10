@@ -11,8 +11,6 @@ return {
 
 				-- Diagnostics
 				null_ls.builtins.diagnostics.yamllint, -- YAML
-        null_ls.builtins.diagnostics.eslint_d, -- Add eslint_d for JavaScript/TypeScript/Svelte
-
 			},
 			on_attach = function(client, bufnr)
 				-- Show diagnostics when cursor holds position
@@ -22,7 +20,7 @@ return {
 						vim.diagnostic.open_float(nil, { focus = false })
 					end,
 				})
-				
+
 				-- Show diagnostics when cursor moves to a new line
 				vim.api.nvim_create_autocmd("CursorMoved", {
 					buffer = bufnr,
@@ -34,7 +32,7 @@ return {
 							lnum = line,
 							col = character,
 						})
-						
+
 						if #diagnostics_at_cursor > 0 then
 							vim.diagnostic.open_float(nil, { focus = false })
 						end
