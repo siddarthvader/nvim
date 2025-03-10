@@ -16,8 +16,8 @@ return {
 				"ruff", -- Python linter
 				"gopls", -- Go language server
 				"eslint", -- JavaScript linter
-				"svelte", -- Svelte language server
-				"eslint_d", -- Faster ESLint implementation
+				"svelte", -- Svelte language server,
+        "ts_ls"
 			},
 		},
 	},
@@ -25,120 +25,86 @@ return {
 		"neovim/nvim-lspconfig",
 		lazy = false,
 		config = function()
+			-- Enhanced LSP capabilities for better autocompletion
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			capabilities.textDocument.completion.completionItem.snippetSupport = true
+			capabilities.textDocument.completion.completionItem = {
+				documentationFormat = { "markdown", "plaintext" },
+				snippetSupport = true,
+				preselectSupport = true,
+				insertReplaceSupport = true,
+				labelDetailsSupport = true,
+				deprecatedSupport = true,
+				commitCharactersSupport = true,
+				tagSupport = { valueSet = { 1 } },
+				resolveSupport = {
+					properties = {
+						"documentation",
+						"detail",
+						"additionalTextEdits",
+					},
+				},
+			}
 			local lspconfig = require("lspconfig")
 
-			-- Define on_attach function to ensure it's available for server configs
+			-- Enhanced on_attach function
 			local on_attach = function(client, bufnr)
 				-- Enable completion triggered by <c-x><c-o>
 				vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
-				-- Enhance hover information with more details
-				if client.supports_method("textDocument/hover") then
-					vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-						border = "rounded",
-						max_width = 80,
-						max_height = 30,
-					})
+				-- Set up simple hover with rounded borders
+				vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
+					border = "rounded",
+					max_width = 80,
+					max_height = 30,
+				})
+
+				-- Enhanced completions setup
+				if client.server_capabilities.completionProvider then
+					client.server_capabilities.completionProvider.triggerCharacters = {
+						".", ":", "@", "/", "-", "#", 
+						-- Add language-specific trigger characters
+						"'", '"', "<", "[", "("
+					}
 				end
 
-				-- Create a command to show diagnostics at current line
+				-- Simple diagnostics command
 				vim.api.nvim_buf_create_user_command(bufnr, "ShowLineDiagnostics", function()
 					vim.diagnostic.open_float({ border = "rounded", focus = false })
 				end, { desc = "Show diagnostics at current line" })
 
-				-- Create custom K keybinding to ALWAYS show hover first, diagnostics only as fallback
-				vim.keymap.set("n", "K", function()
-					-- Always try to show hover information first
-					local hover_successful = false
+				-- Simple K to show hover info
+				vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr, silent = true })
 
-					-- Function to check if hover was successful
-					local check_hover = function()
-						-- If hover failed or returned no info, show diagnostics as fallback
-						if not hover_successful then
-							-- Check for diagnostics at cursor position
-							local line = vim.fn.line(".") - 1
-							local character = vim.fn.col(".") - 1
-							local diagnostics_at_cursor = vim.diagnostic.get(bufnr, {
-								lnum = line,
-								col = character,
-							})
-
-							if #diagnostics_at_cursor > 0 then
-								-- Show diagnostic at cursor position
-								vim.diagnostic.open_float({ border = "rounded", focus = false })
-							else
-								-- If no diagnostic at cursor, show any on the line
-								local line_diagnostics = vim.diagnostic.get(bufnr, { lnum = line })
-								if #line_diagnostics > 0 then
-									vim.diagnostic.open_float({ border = "rounded", focus = false })
-								end
-							end
-						end
-					end
-
-					-- Hook into the hover handler to capture if it was successful
-					local orig_hover_handler = vim.lsp.handlers["textDocument/hover"]
-					vim.lsp.handlers["textDocument/hover"] = function(err, result, ctx, config)
-						if
-							result
-							and result.contents
-							and (
-								(type(result.contents) == "string" and result.contents ~= "")
-								or (
-									type(result.contents) == "table"
-									and result.contents.value
-									and result.contents.value ~= ""
-								)
-							)
-						then
-							hover_successful = true
-						end
-						orig_hover_handler(err, result, ctx, config)
-
-						-- Restore original handler
-						vim.lsp.handlers["textDocument/hover"] = orig_hover_handler
-
-						-- If hover failed, show diagnostics
-						if not hover_successful then
-							vim.defer_fn(check_hover, 50)
-						end
-					end
-
-					-- Try hover
-					vim.lsp.buf.hover()
-
-					-- If hover handler wasn't triggered at all, check diagnostics
-					vim.defer_fn(function()
-						if not hover_successful then
-							check_hover()
-						end
-					end, 100)
-				end, { buffer = bufnr, silent = true })
-
-				-- Add a mapping for explicitly showing diagnostics
+				-- Add a mapping for showing diagnostics
 				vim.keymap.set("n", "<leader>d", function()
 					vim.diagnostic.open_float({ border = "rounded", focus = false })
 				end, { buffer = bufnr, desc = "Show diagnostics at cursor" })
+
+				-- Add refresh completion cache keybinding
+				vim.keymap.set("n", "<leader>r", function()
+					-- Use the built-in LspRestart command for the specific client
+					if client and client.name then
+						vim.cmd("LspRestart " .. client.name)
+						vim.notify("LSP server " .. client.name .. " restarted", vim.log.levels.INFO)
+					else
+						vim.cmd("LspRestart")
+						vim.notify("All LSP servers restarted", vim.log.levels.INFO)
+					end
+				end, { buffer = bufnr, desc = "Restart LSP server and refresh cache" })
 			end
 
 			lspconfig.ts_ls.setup({
 				capabilities = capabilities,
-				on_attach = function(client, bufnr)
-					on_attach(client, bufnr)
-					
-					-- Add refresh completion cache keybinding
-					vim.keymap.set("n", "<leader>rr", function()
-						client.stop()
-						vim.defer_fn(function()
-							client.start()
-							vim.notify("TypeScript server restarted and cache refreshed", vim.log.levels.INFO)
-						end, 1000)
-					end, { buffer = bufnr, desc = "Restart TS server and refresh cache" })
-				end,
+				on_attach = on_attach,
 				-- Exclude Svelte files from TypeScript language server
-				filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+				filetypes = {
+					"javascript",
+					"javascriptreact",
+					"javascript.jsx",
+					"typescript",
+					"typescriptreact",
+					"typescript.tsx",
+				},
 				settings = {
 					typescript = {
 						inlayHints = {
@@ -218,34 +184,21 @@ return {
 				capabilities = capabilities,
 				on_attach = on_attach,
 			})
+			-- Simple Svelte setup
 			lspconfig.svelte.setup({
 				capabilities = capabilities,
-				on_attach = function(client, bufnr)
-					on_attach(client, bufnr)
-					
-					-- Add refresh completion cache keybinding for Svelte
-					vim.keymap.set("n", "<leader>rs", function()
-						client.stop()
-						vim.defer_fn(function()
-							client.start()
-							vim.notify("Svelte server restarted and cache refreshed", vim.log.levels.INFO)
-						end, 1000)
-					end, { buffer = bufnr, desc = "Restart Svelte server and refresh cache" })
-				end,
-				-- Explicitly configure to handle only Svelte files
-				filetypes = { "svelte" },
-				settings = {
-					svelte = {
-						plugin = {
-							-- Only enable what's really needed
-							typescript = {
-								diagnostics = { enable = true },
-								definitions = { enable = true },
-								hover = { enable = true },
-							},
-						},
-					},
+				-- Ensure no duplicate definition behavior
+				handlers = {
+					["textDocument/definition"] = function(_, result, ctx, config)
+						if result and #result == 1 then
+							vim.lsp.util.jump_to_location(result[1], "utf-8")
+						else
+							vim.lsp.handlers["textDocument/definition"](_, result, ctx, config)
+						end
+					end,
 				},
+				on_attach = on_attach,
+				filetypes = { "svelte" },
 			})
 			lspconfig.cssls.setup({
 				capabilities = capabilities,
@@ -334,35 +287,16 @@ return {
 			vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, {})
 			vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, {})
 
-			-- Centralized diagnostic configuration
+			-- Simple diagnostic configuration
 			vim.diagnostic.config({
-				virtual_text = {
-					spacing = 4,
-					prefix = "●",
-					source = "if_many",
-				},
+				virtual_text = { spacing = 4, prefix = "●" },
 				signs = true,
 				underline = true,
-				update_in_insert = true,  -- Show diagnostics even in insert mode
+				update_in_insert = true,
 				severity_sort = true,
 				float = {
-					focusable = false,
-					style = "minimal",
 					border = "rounded",
 					source = "always",
-					header = "",
-					prefix = "",
-					format = function(diagnostic)
-						-- Enhance the diagnostic message with more information
-						local message = diagnostic.message
-						if diagnostic.code then
-							message = string.format("[%s] %s", diagnostic.code, message)
-						end
-						if diagnostic.source then
-							message = string.format("%s (from %s)", message, diagnostic.source)
-						end
-						return message
-					end,
 				},
 			})
 		end,
