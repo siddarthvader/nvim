@@ -17,7 +17,7 @@ return {
 				"gopls", -- Go language server
 				"eslint", -- JavaScript linter
 				"svelte", -- Svelte language server,
-        "ts_ls"
+				"ts_ls",
 			},
 		},
 	},
@@ -61,9 +61,18 @@ return {
 				-- Enhanced completions setup
 				if client.server_capabilities.completionProvider then
 					client.server_capabilities.completionProvider.triggerCharacters = {
-						".", ":", "@", "/", "-", "#", 
+						".",
+						":",
+						"@",
+						"/",
+						"-",
+						"#",
 						-- Add language-specific trigger characters
-						"'", '"', "<", "[", "("
+						"'",
+						'"',
+						"<",
+						"[",
+						"(",
 					}
 				end
 
@@ -254,15 +263,6 @@ return {
 						experimentalPostfixCompletions = true,
 					},
 				},
-			})
-
-			lspconfig.graphql.setup({
-				on_attach = on_attach,
-				root_dir = lspconfig.util.root_pattern(".graphqlconfig", ".graphqlrc", "package.json"),
-				flags = {
-					debounce_text_changes = 150,
-				},
-				capabilities = capabilities,
 			})
 
 			-- Setup for templ with enhanced diagnostics
