@@ -55,7 +55,7 @@ return {
 				vim.keymap.set("n", "<leader>d", function()
 					vim.diagnostic.open_float({ border = "rounded", focus = false })
 				end, { buffer = bufnr, desc = "Show diagnostics at cursor" })
-				vim.keymap.set("n", "<leader>r", function()
+				vim.keymap.set("n", "<leader>rs", function()
 					vim.cmd("LspRestart")
 					vim.notify("LSP servers restarted", vim.log.levels.INFO)
 				end, { buffer = bufnr, desc = "Restart LSP server" })
@@ -247,8 +247,6 @@ return {
 					["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
 					["<C-y>"] = cmp.mapping.confirm({ select = true }),
 					["<C-Space>"] = cmp.mapping.complete(),
-					["<Tab>"] = cmp.mapping.select_next_item({ behaviour = cmp.SelectBehavior.Insert }),
-					["<S-Tab>"] = cmp.mapping.select_prev_item({ behaviour = cmp.SelectBehavior.Insert }),
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 				}),
 			})
