@@ -9,7 +9,7 @@ return {
     indent = { enabled = true },
     input = { enabled = true },
     notifier = {
-      enabled = false, -- Completely disable Snacks notifications to avoid interference with LSP hover
+      enabled = true, -- Completely disable Snacks notifications to avoid interference with LSP hover
     },
     picker = { enabled = true },
     quickfile = { enabled = true },
@@ -18,7 +18,7 @@ return {
     words = { enabled = true },
     styles = {
       notification = {
-        -- wo = { wrap = true } -- Wrap notifications
+        wo = { wrap = true } -- Wrap notifications
       }
     }
   },
