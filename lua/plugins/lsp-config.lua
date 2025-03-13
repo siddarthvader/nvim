@@ -14,13 +14,13 @@ return {
 			ensure_installed = {
 				"eslint", -- JavaScript linter
 				"svelte", -- Svelte language server
-				"ts_ls", -- TypeScript language server
 				"tailwindcss", -- Tailwind CSS language server
 				"cssls", -- CSS language server
 				"html", -- HTML language server
 				"pyright", -- Python type checker
 				"ruff", -- Python linter
 				"gopls", -- Go language server
+				"vtsls", -- TypeScript language server (replacing ts_ls)
 			},
 		},
 	},
@@ -46,6 +46,12 @@ return {
 
 				-- Key mappings
 				vim.keymap.set("n", "K", vim.lsp.buf.hover, { buffer = bufnr, silent = true })
+				vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr, desc = "Go to definition" })
+				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = bufnr, desc = "Go to declaration" })
+				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = bufnr, desc = "Go to implementation" })
+				vim.keymap.set("n", "go", vim.lsp.buf.type_definition, { buffer = bufnr, desc = "Go to type definition" })
+				vim.keymap.set("n", "gr", vim.lsp.buf.references, { buffer = bufnr, desc = "Go to references" })
+				vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "Show signature help" })
 				vim.keymap.set("n", "<leader>d", function()
 					vim.diagnostic.open_float({ border = "rounded", focus = false })
 				end, { buffer = bufnr, desc = "Show diagnostics at cursor" })
@@ -55,8 +61,8 @@ return {
 				end, { buffer = bufnr, desc = "Restart LSP server" })
 			end
 
-			-- TypeScript setup
-			lspconfig.ts_ls.setup({
+			-- TypeScript setup (using vtsls instead of ts_ls)
+			lspconfig.vtsls.setup({
 				capabilities = capabilities,
 				on_attach = on_attach,
 				filetypes = {
@@ -67,6 +73,14 @@ return {
 					"typescriptreact",
 					"typescript.tsx",
 				},
+				root_dir = require("lspconfig").util.root_pattern(
+					".git",
+					"pnpm-workspace.yaml",
+					"pnpm-lock.yaml",
+					"yarn.lock",
+					"package-lock.json",
+					"bun.lockb"
+				),
 				settings = {
 					typescript = {
 						inlayHints = {
@@ -74,12 +88,20 @@ return {
 							includeInlayVariableTypeHints = false,
 							includeInlayPropertyDeclarationTypeHints = false,
 						},
+						tsserver = {
+							maxTsServerMemory = 12288,
+						},
 					},
 					javascript = {
 						inlayHints = {
 							includeInlayParameterNameHints = "literals",
 							includeInlayVariableTypeHints = false,
 							includeInlayPropertyDeclarationTypeHints = false,
+						},
+					},
+					experimental = {
+						completion = {
+							entriesLimit = 3,
 						},
 					},
 				},
@@ -202,6 +224,33 @@ return {
 					border = "rounded",
 					source = "always",
 				},
+			})
+		end,
+	},
+	{
+		"hrsh7th/nvim-cmp",
+		dependencies = {
+			"hrsh7th/cmp-nvim-lsp",
+			"L3MON4D3/LuaSnip",
+			"saadparwaiz1/cmp_luasnip",
+			"hrsh7th/cmp-path",
+		},
+		config = function()
+			local cmp = require("cmp")
+			local cmp_select = { behavior = cmp.SelectBehavior.Insert }
+			cmp.setup({
+				sources = {
+					{ name = "nvim_lsp" },
+				},
+				mapping = cmp.mapping.preset.insert({
+					["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
+					["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
+					["<C-y>"] = cmp.mapping.confirm({ select = true }),
+					["<C-Space>"] = cmp.mapping.complete(),
+					["<Tab>"] = cmp.mapping.select_next_item({ behaviour = cmp.SelectBehavior.Insert }),
+					["<S-Tab>"] = cmp.mapping.select_prev_item({ behaviour = cmp.SelectBehavior.Insert }),
+					["<CR>"] = cmp.mapping.confirm({ select = true }),
+				}),
 			})
 		end,
 	},
