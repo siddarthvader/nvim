@@ -6,6 +6,26 @@ This README provides a comprehensive list of custom keymaps defined in your Neov
 
 - `<Space>`: Leader key
 
+### AI Assistant (Avante)
+
+- `<C-a>`: Submit text to Avante AI assistant (in insert mode)
+- `<leader>aa`: Show sidebar
+- `<leader>at`: Toggle sidebar visibility
+- `<leader>ar`: Refresh sidebar
+- `<leader>af`: Switch sidebar focus
+- `<leader>a?`: Select model
+- `<leader>ae`: Edit selected blocks
+- `co`: Choose ours (conflict resolution)
+- `ct`: Choose theirs (conflict resolution)
+- `ca`: Choose all theirs (conflict resolution)
+- `c0`: Choose none (conflict resolution)
+- `cb`: Choose both (conflict resolution)
+- `cc`: Choose cursor (conflict resolution)
+- `]x`: Move to previous conflict
+- `[x`: Move to next conflict
+- `[[`: Jump to previous codeblocks (results window)
+- `]]`: Jump to next codeblocks (results windows)
+
 ### File Operations
 
 - `<leader>s`: Save file (files are also auto-saved on InsertLeave and TextChanged)
@@ -123,33 +143,8 @@ This README provides a comprehensive list of custom keymaps defined in your Neov
 - `<leader>ug`: Toggle indent guides
 - `<leader>uD`: Toggle dim
 
-### CodeCompanion AI Keymaps
-
-#### Main Commands (`<leader>o` prefix)
-- `<leader>oi`: Open inline assistant (normal and visual mode)
-- `<leader>oc`: Open chat buffer
-- `<leader>ot`: Toggle chat buffer
-- `<leader>om`: Generate command-line
-- `<leader>oa`: Open action palette
-
-#### Visual Mode Commands
-- `<leader>ov`: Add selection to chat
-
-#### Prompt Library Access
-- `<leader>oe`: Explain code (normal and visual mode)
-- `<leader>ou`: Generate unit tests (normal and visual mode)
-- `<leader>of`: Fix code (normal and visual mode)
-- `<leader>ol`: Explain LSP diagnostics (normal and visual mode)
-- `<leader>og`: Generate commit message
-
-#### Code Workflow Commands
-- `<leader>ow`: Code workflow
-- `<leader>od`: Edit-test workflow
-
-#### Custom Prompts
-- `<leader>op`: Custom prompt (normal and visual mode)
-
 ### Editor Settings
+
 
 - Line numbers are enabled (both absolute and relative)
 - Tab width is set to 2 spaces
