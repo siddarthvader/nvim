@@ -45,11 +45,14 @@ vim.keymap.set("t", "<C-w>", [[<C-\><C-n><C-w>]], opts)
 
 vim.filetype.add({ extension = { templ = "templ" } })
 
-vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
 
 vim.cmd("set number")
 
 vim.cmd("set relativenumber")
+
+-- Case insensitive searching unless capital in search
+vim.o.ignorecase = true
+vim.o.smartcase = true
 
 -- Add a keybinding to restart ESLint LSP
 vim.keymap.set("n", "<leader>re", function()

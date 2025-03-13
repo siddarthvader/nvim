@@ -3,9 +3,6 @@ return {
 		"hrsh7th/cmp-nvim-lsp",
 	},
 	{
-		"hrsh7th/cmp-buffer", -- Add buffer completion source
-	},
-	{
 		"hrsh7th/cmp-path", -- Add path completion source
 	},
 	{
@@ -21,23 +18,8 @@ return {
 			local cmp = require("cmp")
 			require("luasnip.loaders.from_vscode").lazy_load()
 
-			-- Set up completion mode to be eager instead of lazy
+			-- Set up completion mode
 			vim.o.completeopt = "menu,menuone,noselect"
-
-			-- Create an autocommand to force refresh completions 
-			vim.api.nvim_create_autocmd({ "BufEnter" }, {
-				pattern = { "*.js", "*.ts", "*.jsx", "*.tsx", "*.svelte" },
-				callback = function()
-					-- Just check for active LSP clients
-					local has_lsp = #vim.lsp.get_active_clients({ bufnr = 0 }) > 0
-					if has_lsp then
-						vim.schedule(function()
-							-- Use the cmp API directly to refresh completion
-							require("cmp").complete()
-						end)
-					end
-				end,
-			})
 
 			cmp.setup({
 				snippet = {
@@ -57,18 +39,18 @@ return {
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 				}),
 				sources = {
-					{ name = "nvim_lsp", keyword_length = 1, max_item_count = 30 },
-					{ name = "buffer", keyword_length = 2, max_item_count = 20 },
-					{ name = "path", keyword_length = 2, max_item_count = 10 },
+					{ name = "nvim_lsp", keyword_length = 2, max_item_count = 20 },
+					{ name = "path", keyword_length = 3, max_item_count = 5 },
 					{ name = "luasnip", keyword_length = 2 },
+				},
+				performance = {
+					max_view_entries = 20,
+					trigger_debounce_time = 150, -- ms
+					throttle = 50, -- ms
 				},
 				completion = {
 					completeopt = "menu,menuone,noinsert",
-					autocomplete = {
-						require("cmp.types").cmp.TriggerEvent.TextChanged,
-					},
-					keyword_pattern = [[\%(-\?\d\+\%(\.\d\+\)\?\|\h\w*\%(-\w*\)*\)]],
-					keyword_length = 1,
+					keyword_length = 2, -- Increased minimum length to reduce constant triggering
 				},
 			})
 		end,
