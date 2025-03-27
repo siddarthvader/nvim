@@ -234,13 +234,19 @@ return {
 			"L3MON4D3/LuaSnip",
 			"saadparwaiz1/cmp_luasnip",
 			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-buffer",
 		},
 		config = function()
 			local cmp = require("cmp")
-			local cmp_select = { behavior = cmp.SelectBehavior.Insert }
+			local cmp_select = { behavior = cmp.SelectBehavior.Select }
+			
+			-- Set up autocomplete
 			cmp.setup({
 				sources = {
-					{ name = "nvim_lsp" },
+					{ name = "nvim_lsp", priority = 1000 },
+					{ name = "luasnip", priority = 750 },
+					{ name = "buffer", keyword_length = 3, priority = 500 },
+					{ name = "path", priority = 250 },
 				},
 				mapping = cmp.mapping.preset.insert({
 					["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
@@ -249,7 +255,49 @@ return {
 					["<C-Space>"] = cmp.mapping.complete(),
 					["<CR>"] = cmp.mapping.confirm({ select = true }),
 				}),
+				preselect = cmp.PreselectMode.None,
+				completion = {
+					completeopt = "menu,menuone,noselect",
+				},
+				sorting = {
+					priority_weight = 2,
+					comparators = {
+						cmp.config.compare.offset,
+						cmp.config.compare.exact,
+						cmp.config.compare.score,
+						cmp.config.compare.kind,
+						cmp.config.compare.sort_text,
+						cmp.config.compare.length,
+						cmp.config.compare.order,
+					},
+				},
+				-- This automatically selects the first item when completion menu opens
+				view = {
+					entries = {
+						name = "custom",
+						selection_order = "near_cursor",
+					},
+				},
+				window = {
+					completion = {
+						border = "rounded",
+						winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None",
+					},
+					documentation = {
+						border = "rounded",
+					},
+				},
+				experimental = {
+					ghost_text = false,
+				},
 			})
+			
+			-- Select (highlight) the first item when completion shows, but don't insert it
+			cmp.event:on("menu_opened", function()
+				vim.schedule(function()
+					cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+				end)
+			end)
 		end,
 	},
 }
