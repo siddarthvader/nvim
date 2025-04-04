@@ -50,6 +50,10 @@ vim.cmd("set number")
 
 vim.cmd("set relativenumber")
 
+-- Hide default status line and command line since we use Windline
+vim.opt.laststatus = 0  -- Hide status line
+vim.opt.cmdheight = 0   -- Hide command line
+
 -- Case insensitive searching unless capital in search
 vim.o.ignorecase = true
 vim.o.smartcase = true

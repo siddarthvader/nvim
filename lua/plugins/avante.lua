@@ -13,6 +13,11 @@ return {
 			temperature = 0,
 			max_tokens = 4096,
 		},
+		behaviour = {
+			auto_suggestions = false,
+			enabled_cursor_planning_mode = false,
+			enable_claude_text_editor_tool_mode = false,
+		},
 		mappings = {
 			submit = {
 				insert = "<C-a>",

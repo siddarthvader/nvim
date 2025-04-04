@@ -49,7 +49,12 @@ return {
 				vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = bufnr, desc = "Go to definition" })
 				vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = bufnr, desc = "Go to declaration" })
 				vim.keymap.set("n", "gi", vim.lsp.buf.implementation, { buffer = bufnr, desc = "Go to implementation" })
-				vim.keymap.set("n", "go", vim.lsp.buf.type_definition, { buffer = bufnr, desc = "Go to type definition" })
+				vim.keymap.set(
+					"n",
+					"go",
+					vim.lsp.buf.type_definition,
+					{ buffer = bufnr, desc = "Go to type definition" }
+				)
 				vim.keymap.set("n", "gr", vim.lsp.buf.references, { buffer = bufnr, desc = "Go to references" })
 				vim.keymap.set("n", "gs", vim.lsp.buf.signature_help, { buffer = bufnr, desc = "Show signature help" })
 				vim.keymap.set("n", "<leader>d", function()
@@ -239,7 +244,7 @@ return {
 		config = function()
 			local cmp = require("cmp")
 			local cmp_select = { behavior = cmp.SelectBehavior.Select }
-			
+
 			-- Set up autocomplete
 			cmp.setup({
 				sources = {
@@ -291,7 +296,7 @@ return {
 					ghost_text = false,
 				},
 			})
-			
+
 			-- Select (highlight) the first item when completion shows, but don't insert it
 			cmp.event:on("menu_opened", function()
 				vim.schedule(function()
