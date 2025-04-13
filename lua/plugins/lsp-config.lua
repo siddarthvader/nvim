@@ -211,6 +211,13 @@ return {
 				},
 			})
 
+			-- Ocaml setup
+			lspconfig.ocamllsp.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				filetypes = { "ocaml", "reason" },
+			})
+
 			-- Global key mappings
 			vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
 			vim.keymap.set("n", "<leader>gd", vim.lsp.buf.definition, {})

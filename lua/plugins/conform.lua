@@ -15,6 +15,7 @@ return {
       gql= {"prettierd"},
       fish = { "fish_indent" },
       go = { "gofmt" },
+      ocaml = { "ocamlformat" },
       html = { "prettierd" },
       javascript = { "prettierd" },
       javascriptreact = { "prettierd" },
