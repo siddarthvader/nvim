@@ -3,7 +3,7 @@ return {
   lazy = false,
   priority = 1000,
   config = function()
-    vim.cmd.colorscheme("tokyonight-storm")
+    vim.cmd.colorscheme("tokyonight-night")
     require("tokyonight").setup({
       style = "night",        -- The theme comes in three styles, `storm`, `moon`, and `night`.
       light_style = "day",    -- The theme is used when the background is set to light
