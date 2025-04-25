@@ -12,7 +12,6 @@ return {
 		opts = {
 			auto_install = true,
 			ensure_installed = {
-				"eslint", -- JavaScript linter
 				"svelte", -- Svelte language server
 				"tailwindcss", -- Tailwind CSS language server
 				"cssls", -- CSS language server
@@ -109,23 +108,6 @@ return {
 							entriesLimit = 3,
 						},
 					},
-				},
-			})
-
-			-- ESLint setup
-			lspconfig.eslint.setup({
-				capabilities = capabilities,
-				on_attach = function(client, bufnr)
-					on_attach(client, bufnr)
-					vim.keymap.set("n", "<leader>el", function()
-						vim.cmd("EslintFixAll")
-						vim.notify("ESLint ran on current file", vim.log.levels.INFO)
-					end, { buffer = bufnr, desc = "Run ESLint on current file" })
-				end,
-				filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "svelte" },
-				settings = {
-					workingDirectory = { mode = "auto" },
-					run = "onSave", -- Only run on save, not as you type
 				},
 			})
 

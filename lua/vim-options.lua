@@ -58,9 +58,3 @@ vim.opt.cmdheight = 0   -- Hide command line
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
--- Add a keybinding to restart ESLint LSP
-vim.keymap.set("n", "<leader>re", function()
-  vim.cmd("LspRestart eslint")
-  vim.notify("ESLint restarted", vim.log.levels.INFO)
-end, { desc = 'Restart ESLint LSP' })
-
