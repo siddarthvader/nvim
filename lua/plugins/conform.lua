@@ -9,10 +9,10 @@ return {
     format_on_save = false, -- Disabled auto-formatting on save
     formatters_by_ft = {
       bash = { "beautysh" },
-      c = {},
+      c = { "clang-format" },
       css = { "prettierd" },
       graphql = { "prettierd" },
-      gql= {"prettierd"},
+      gql = { "prettierd" },
       fish = { "fish_indent" },
       go = { "gofmt" },
       ocaml = { "ocamlformat" },
@@ -22,7 +22,7 @@ return {
       json = { "prettierd" },
       lua = { "stylua" },
       markdown = { "prettierd" },
-      nix = { "alejandra" }, --fallback to rnix_lsp
+      nix = { "alejandra" },
       python = { "ruff_format" },
       sql = { "sql_formatter" },
       svelte = { "prettierd" },

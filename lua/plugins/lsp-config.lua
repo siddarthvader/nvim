@@ -2,9 +2,20 @@ return {
 	{
 		"williamboman/mason.nvim",
 		lazy = false,
-		config = function()
-			require("mason").setup()
-		end,
+		opts = {
+			ensure_installed = {
+				-- Formatters and linters
+				"prettierd",
+				"stylua", 
+				"ocamlformat",
+				"eslint_d",
+				"beautysh",
+				"clang-format",
+				"sql_formatter",
+				"alejandra",
+				"fish_indent",
+			},
+		},
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",
@@ -12,14 +23,18 @@ return {
 		opts = {
 			auto_install = true,
 			ensure_installed = {
-				"svelte", -- Svelte language server
-				"tailwindcss", -- Tailwind CSS language server
-				"cssls", -- CSS language server
-				"html", -- HTML language server
+				-- Language Servers only (formatters go in mason.nvim)
+				"vtsls", -- TypeScript/JavaScript
+				"svelte", -- Svelte
+				"html", -- HTML
+				"cssls", -- CSS
+				"tailwindcss", -- Tailwind CSS
+				"jsonls", -- JSON
 				"pyright", -- Python type checker
 				"ruff", -- Python linter
-				"gopls", -- Go language server
-				"vtsls", -- TypeScript language server (replacing ts_ls)
+				"gopls", -- Go
+				"lua_ls", -- Lua
+				"ocamllsp", -- OCaml
 			},
 		},
 	},
@@ -60,7 +75,8 @@ return {
 					vim.diagnostic.open_float({ border = "rounded", focus = false })
 				end, { buffer = bufnr, desc = "Show diagnostics at cursor" })
 				vim.keymap.set("n", "<leader>rs", function()
-					vim.cmd("LspRestart")
+					vim.lsp.stop_client(vim.lsp.get_active_clients())
+					vim.cmd("edit")
 					vim.notify("LSP servers restarted", vim.log.levels.INFO)
 				end, { buffer = bufnr, desc = "Restart LSP server" })
 			end
@@ -189,6 +205,28 @@ return {
 						gofumpt = true,
 						usePlaceholders = true,
 						completeUnimported = true,
+					},
+				},
+			})
+
+			-- JSON setup
+			lspconfig.jsonls.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+			})
+
+			-- Lua setup
+			lspconfig.lua_ls.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				settings = {
+					Lua = {
+						diagnostics = {
+							globals = { "vim" },
+						},
+						workspace = {
+							library = vim.api.nvim_get_runtime_file("", true),
+						},
 					},
 				},
 			})
