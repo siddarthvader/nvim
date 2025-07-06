@@ -27,7 +27,7 @@ vim.keymap.set({ "n", "x" }, "gP", "<Plug>(YankyGPutBefore)")
 vim.keymap.set("n", "<c-p>", "<Plug>(YankyPreviousEntry)")
 vim.keymap.set("n", "<c-n>", "<Plug>(YankyNextEntry)")
 
-vim.api.nvim_set_option("clipboard", "unnamed")
+vim.api.nvim_set_option("clipboard", "unnamedplus")
 vim.keymap.set("n", "<leader>s", ":w<CR>", { desc = "Save file" })
 
 vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], opts)

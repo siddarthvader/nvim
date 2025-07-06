@@ -6,7 +6,6 @@ return {
   },
   opts = {
     notify_on_error = false,
-    format_on_save = false, -- Disabled auto-formatting on save
     formatters_by_ft = {
       bash = { "beautysh" },
       c = { "clang-format" },
@@ -17,8 +16,8 @@ return {
       go = { "gofmt" },
       ocaml = { "ocamlformat" },
       html = { "prettierd" },
-      javascript = { "prettierd" },
-      javascriptreact = { "prettierd" },
+      javascript = { "biome", "prettierd" },
+      javascriptreact = { "biome", "prettierd" },
       json = { "prettierd" },
       lua = { "stylua" },
       markdown = { "prettierd" },
@@ -26,8 +25,9 @@ return {
       python = { "ruff_format" },
       sql = { "sql_formatter" },
       svelte = { "prettierd" },
-      typescript = { "prettierd" },
-      typescriptreact = { "prettierd" },
+      templ = { "templ" },
+      typescript = { "biome", "prettierd" },
+      typescriptreact = { "biome", "prettierd" },
       yaml = { "prettierd" },
       zsh = { "beautysh" },
     },
@@ -37,6 +37,11 @@ return {
           "--style",
           "{IndentCaseLabels: true, IndentWidth: 4, AllowShortFunctionsOnASingleLine: None}",
         },
+      },
+      templ = {
+        command = "templ",
+        args = { "fmt" },
+        stdin = false,
       },
     },
   },
