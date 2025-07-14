@@ -25,7 +25,7 @@ return {
       ensure_installed = {
         -- Language Servers only (formatters go in mason.nvim)
         "vtsls",   -- TypeScript/JavaScript
-        "svelte",  -- Svelte
+        "svelte-language-server",  -- Svelte
         "html",    -- HTML
         "cssls",   -- CSS
         "tailwindcss", -- Tailwind CSS
