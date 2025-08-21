@@ -14,7 +14,21 @@ return {
 			notifier = {
 				enabled = true, -- Completely disable Snacks notifications to avoid interference with LSP hover
 			},
-			picker = { enabled = true },
+			picker = { 
+				enabled = true,
+				grep = {
+					args = {
+						"--column",
+						"--line-number",
+						"--no-heading",
+						"--color=never",
+						"--smart-case",
+						"--hidden",
+						"--glob=!.git/",
+						"--glob=!node_modules/",
+					},
+				},
+			},
 			quickfile = { enabled = true },
 			scroll = { enabled = true },
 			statuscolumn = { enabled = true },

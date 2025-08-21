@@ -58,3 +58,6 @@ vim.opt.cmdheight = 0   -- Hide command line
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
+-- Reduce LSP log noise
+vim.lsp.set_log_level("ERROR")
+

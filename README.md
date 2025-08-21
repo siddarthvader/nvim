@@ -91,6 +91,8 @@ This README provides a comprehensive list of custom keymaps defined in your Neov
 - `<leader>sk`: Search keymaps
 - `<leader>ss`: Search LSP symbols
 - `<leader>sS`: Search LSP workspace symbols
+- `<leader>sf`: Find functions/methods only (via Telescope)
+- `<leader>sF`: Find workspace functions/methods only (via Telescope)
 
 #### Git Operations
 - `<leader>gl`: Git log

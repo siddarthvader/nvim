@@ -21,11 +21,10 @@ return {
     "williamboman/mason-lspconfig.nvim",
     lazy = false,
     opts = {
-      auto_install = true,
+      auto_install = false, -- Disable auto-install to prevent unwanted LSPs
       ensure_installed = {
         -- Language Servers only (formatters go in mason.nvim)
         "vtsls",   -- TypeScript/JavaScript
-        "svelte-language-server",  -- Svelte
         "html",    -- HTML
         "cssls",   -- CSS
         "tailwindcss", -- Tailwind CSS
@@ -250,9 +249,12 @@ return {
 
       -- Setup all servers with their configurations
       for name, config in pairs(servers) do
-        config.capabilities = capabilities
-        config.on_attach = config.on_attach or on_attach
-        lspconfig[name].setup(config)
+        -- Skip ESLint LSP - using nvim-lint instead
+        if name ~= "eslint" then
+          config.capabilities = capabilities
+          config.on_attach = config.on_attach or on_attach
+          lspconfig[name].setup(config)
+        end
       end
 
       -- Global key mappings
