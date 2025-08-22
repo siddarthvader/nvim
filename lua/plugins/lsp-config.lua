@@ -8,7 +8,6 @@ return {
         "prettierd",
         "stylua",
         "ocamlformat",
-        "eslint_d",
         "beautysh",
         "clang-format",
         "sql_formatter",
@@ -52,8 +51,7 @@ return {
           "sql-formatter",
           "alejandra",
           -- Linters
-          "eslint_d",
-          "golangci-lint",
+            "golangci-lint",
         },
         auto_update = true,
         run_on_start = true,
