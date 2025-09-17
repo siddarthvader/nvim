@@ -24,6 +24,7 @@ return {
       ensure_installed = {
         -- Language Servers only (formatters go in mason.nvim)
         "vtsls",   -- TypeScript/JavaScript
+        "svelte",  -- Svelte
         "html",    -- HTML
         "cssls",   -- CSS
         "tailwindcss", -- Tailwind CSS
@@ -81,6 +82,8 @@ return {
             "typescript.tsx",
           },
           root_dir = lspconfig.util.root_pattern(
+            "tsconfig.json",
+            "jsconfig.json",
             ".git",
             "pnpm-workspace.yaml",
             "pnpm-lock.yaml",
@@ -101,6 +104,9 @@ return {
             typescript = {
               updateImportOnFileMove = { enabled = "always" },
               suggest = { completeFunctionCalls = true },
+              preferences = {
+                includePackageJsonAutoImports = "on",
+              },
               inlayHints = {
                 enumMemberValues = { enabled = true },
                 functionLikeReturnTypes = { enabled = true },
@@ -138,7 +144,21 @@ return {
             },
           },
         },
-        svelte = {},
+        svelte = {
+          settings = {
+            svelte = {
+              plugin = {
+                typescript = {
+                  diagnostics = { enable = true },
+                  hover = { enable = true },
+                  completions = { enable = true },
+                  codeActions = { enable = true },
+                  selectionRange = { enable = true },
+                },
+              },
+            },
+          },
+        },
         cssls = {},
         pyright = {
           settings = {
