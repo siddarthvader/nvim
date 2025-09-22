@@ -30,10 +30,14 @@ vim.api.nvim_create_user_command("CopyFilePathToClipboard", function()
   vim.notify("Copied to clipboard: " .. relative_path, vim.log.levels.INFO)
 end, { desc = "Copy file path to clipboard (relative to parent of project root)" })
 
--- Short alias for the command
+-- Short aliases for the commands
 vim.api.nvim_create_user_command("CFP", function()
   vim.cmd(":CopyFilePathToClipboard")
 end, { desc = "Copy file path to clipboard (alias)" })
+
+vim.api.nvim_create_user_command("CAP", function()
+  vim.cmd(":CopyFullPath")
+end, { desc = "Copy absolute path to clipboard (alias)" })
 
 -- Additional file path copy commands for convenience
 vim.api.nvim_create_user_command("CopyFullPath", function()
@@ -48,5 +52,6 @@ vim.api.nvim_create_user_command("CopyFileName", function()
   vim.notify("Copied filename to clipboard: " .. file_name, vim.log.levels.INFO)
 end, { desc = "Copy filename to clipboard" })
 
--- Keybinding for quick access
-vim.keymap.set("n", "<leader>cfp", ":CopyFilePathToClipboard<CR>", { desc = "Copy file path to clipboard", silent = true })
+-- Keybindings for quick access
+vim.keymap.set("n", "<leader>yr", "<cmd>CopyFilePathToClipboard<CR>", { desc = "Yank relative file path to clipboard", silent = true })
+vim.keymap.set("n", "<leader>ya", "<cmd>CopyFullPath<CR>", { desc = "Yank absolute file path to clipboard", silent = true })
