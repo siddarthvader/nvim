@@ -41,13 +41,14 @@ return {
 			},
 		},
 		keys = {
-			{
-				"<leader><space>",
-				function()
-					Snacks.picker.smart()
-				end,
-				desc = "Smart Find Files",
-			},
+			-- Disabled in favor of fff.nvim
+			-- {
+			-- 	"<leader><space>",
+			-- 	function()
+			-- 		Snacks.picker.smart()
+			-- 	end,
+			-- 	desc = "Smart Find Files",
+			-- },
 			{
 				"<leader>,",
 				function()
@@ -91,20 +92,22 @@ return {
 				end,
 				desc = "Buffers",
 			},
-			{
-				"<leader>fc",
-				function()
-					Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
-				end,
-				desc = "Find Config File",
-			},
-			{
-				"<leader>fg",
-				function()
-					Snacks.picker.git_files()
-				end,
-				desc = "Find Git Files",
-			},
+			-- Disabled in favor of fff.nvim
+			-- {
+			-- 	"<leader>fc",
+			-- 	function()
+			-- 		Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
+			-- 	end,
+			-- 	desc = "Find Config File",
+			-- },
+			-- Disabled in favor of fff.nvim
+			-- {
+			-- 	"<leader>fg",
+			-- 	function()
+			-- 		Snacks.picker.git_files()
+			-- 	end,
+			-- 	desc = "Find Git Files",
+			-- },
 			{
 				"<leader>fp",
 				function()
@@ -112,13 +115,14 @@ return {
 				end,
 				desc = "Projects",
 			},
-			{
-				"<leader>fr",
-				function()
-					Snacks.picker.recent()
-				end,
-				desc = "Recent",
-			},
+			-- Disabled in favor of fff.nvim
+			-- {
+			-- 	"<leader>fr",
+			-- 	function()
+			-- 		Snacks.picker.recent()
+			-- 	end,
+			-- 	desc = "Recent",
+			-- },
 			-- git
 			{
 				"<leader>gl",

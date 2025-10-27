@@ -69,6 +69,26 @@ return {
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
       local lspconfig = require("lspconfig")
+      local configs = require("lspconfig.configs")
+
+      -- Register custom Houdini LSP if not already registered
+      if not configs.houdini_lsp then
+        configs.houdini_lsp = {
+          default_config = {
+            cmd = { "node", "/Users/d2du/Desktop/code/OSS/houdini-root/houdini/packages/houdini-lsp/dist/server.js", "--stdio" },
+            filetypes = { "graphql", "typescript", "typescriptreact", "javascript", "javascriptreact", "svelte" },
+            root_dir = lspconfig.util.root_pattern(
+              ".graphqlrc.yaml",
+              "houdini.config.js",
+              "houdini.config.ts",
+              "package.json",
+              ".git"
+            ),
+            settings = {},
+            init_options = {},
+          },
+        }
+      end
 
       -- Server configurations in modular pattern
       local servers = {
@@ -274,6 +294,12 @@ return {
           lspconfig[name].setup(config)
         end
       end
+
+      -- Setup Houdini LSP separately
+      lspconfig.houdini_lsp.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+      })
 
       -- Global key mappings
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
