@@ -5,6 +5,7 @@ return {
     opts = {
       ensure_installed = {
         -- Formatters and linters
+        "prettier",
         "prettierd",
         "stylua",
         "ocamlformat",
@@ -23,16 +24,17 @@ return {
       auto_install = false, -- Disable auto-install to prevent unwanted LSPs
       ensure_installed = {
         -- Language Servers only (formatters go in mason.nvim)
-        "vtsls",   -- TypeScript/JavaScript
-        "svelte",  -- Svelte
-        "html",    -- HTML
-        "cssls",   -- CSS
+        "tsgo", -- TypeScript/JavaScript
+        "biome", -- Biome LSP (diagnostics + code actions)
+        "svelte", -- Svelte
+        "html", -- HTML
+        "cssls", -- CSS
         "tailwindcss", -- Tailwind CSS
-        "jsonls",  -- JSON
+        "jsonls", -- JSON
         "pyright", -- Python type checker
-        "ruff",    -- Python linter
-        "gopls",   -- Go
-        "lua_ls",  -- Lua
+        "ruff", -- Python linter
+        "gopls", -- Go
+        "lua_ls", -- Lua
       },
     },
   },
@@ -45,6 +47,7 @@ return {
         ensure_installed = {
           -- Formatters
           "biome",
+          "prettier",
           "prettierd",
           "stylua",
           "beautysh",
@@ -71,35 +74,15 @@ return {
       local lspconfig = require("lspconfig")
       local configs = require("lspconfig.configs")
 
-      -- Register custom Houdini LSP if not already registered
-      if not configs.houdini_lsp then
-        configs.houdini_lsp = {
-          default_config = {
-            cmd = { "node", "/Users/d2du/Desktop/code/OSS/houdini-root/houdini/packages/houdini-lsp/dist/server.js", "--stdio" },
-            filetypes = { "graphql", "typescript", "typescriptreact", "javascript", "javascriptreact", "svelte" },
-            root_dir = lspconfig.util.root_pattern(
-              ".graphqlrc.yaml",
-              "houdini.config.js",
-              "houdini.config.ts",
-              "package.json",
-              ".git"
-            ),
-            settings = {},
-            init_options = {},
-          },
-        }
-      end
 
       -- Server configurations in modular pattern
       local servers = {
-        vtsls = {
+        tsgo = {
           filetypes = {
             "javascript",
             "javascriptreact",
-            "javascript.jsx",
             "typescript",
             "typescriptreact",
-            "typescript.tsx",
           },
           root_dir = lspconfig.util.root_pattern(
             "tsconfig.json",
@@ -109,24 +92,11 @@ return {
             "pnpm-lock.yaml",
             "yarn.lock",
             "package-lock.json",
+            "bun.lock",
             "bun.lockb"
           ),
           settings = {
-            complete_function_calls = true,
-            vtsls = {
-              autoUseWorkspaceTsdk = true,
-              experimental = {
-                completion = {
-                  enableServerSideFuzzyMatch = true,
-                },
-              },
-            },
             typescript = {
-              updateImportOnFileMove = { enabled = "always" },
-              suggest = { completeFunctionCalls = true },
-              preferences = {
-                includePackageJsonAutoImports = "on",
-              },
               inlayHints = {
                 enumMemberValues = { enabled = true },
                 functionLikeReturnTypes = { enabled = true },
@@ -135,22 +105,19 @@ return {
                 propertyDeclarationTypes = { enabled = true },
                 variableTypes = { enabled = true },
               },
-              tsserver = {
-                maxTsServerMemory = 12288,
-              },
             },
-            javascript = {
-              updateImportOnFileMove = { enabled = "always" },
-              suggest = { completeFunctionCalls = true },
-              inlayHints = {
-                enumMemberValues = { enabled = true },
-                functionLikeReturnTypes = { enabled = true },
-                functionParameterTypes = { enabled = true },
-                parameterNames = { enabled = "all" },
-                propertyDeclarationTypes = { enabled = true },
-                variableTypes = { enabled = false },
-              },
-            },
+          },
+        },
+        biome = {
+          filetypes = {
+            "javascript",
+            "javascriptreact",
+            "typescript",
+            "typescriptreact",
+            "json",
+            "jsonc",
+            "css",
+            "html",
           },
         },
         html = {},
@@ -290,16 +257,37 @@ return {
         -- Skip ESLint LSP - using nvim-lint instead
         if name ~= "eslint" then
           config.capabilities = capabilities
-          config.on_attach = config.on_attach or on_attach
+
+          local base_on_attach = config.on_attach or on_attach
+          if name == "tsgo" then
+            config.on_attach = function(client, bufnr)
+              client.server_capabilities.documentFormattingProvider = false
+              base_on_attach(client, bufnr)
+            end
+          else
+            config.on_attach = base_on_attach
+          end
+
           lspconfig[name].setup(config)
         end
       end
 
-      -- Setup Houdini LSP separately
-      lspconfig.houdini_lsp.setup({
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
+      if not configs.houdini_lsp then
+        configs.houdini_lsp = {
+          default_config = {
+            cmd = { "houdini-lsp" },
+            filetypes = { "svelte", "graphql", "javascript", "javascriptreact", "typescript", "typescriptreact" },
+            root_dir = lspconfig.util.root_pattern("houdini.config.js", "package.json", ".git"),
+          },
+        }
+      end
+
+      if vim.fn.executable("houdini-lsp") == 1 then
+        lspconfig.houdini_lsp.setup({
+          capabilities = capabilities,
+          on_attach = on_attach,
+        })
+      end
 
       -- Global key mappings
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
