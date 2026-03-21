@@ -24,7 +24,7 @@ return {
       auto_install = false, -- Disable auto-install to prevent unwanted LSPs
       ensure_installed = {
         -- Language Servers only (formatters go in mason.nvim)
-        "tsgo", -- TypeScript/JavaScript
+        "vtsls", -- TypeScript/JavaScript
         "biome", -- Biome LSP (diagnostics + code actions)
         "svelte", -- Svelte
         "html", -- HTML
@@ -77,12 +77,14 @@ return {
 
       -- Server configurations in modular pattern
       local servers = {
-        tsgo = {
+        vtsls = {
           filetypes = {
             "javascript",
             "javascriptreact",
+            "javascript.jsx",
             "typescript",
             "typescriptreact",
+            "typescript.tsx",
           },
           root_dir = lspconfig.util.root_pattern(
             "tsconfig.json",
@@ -96,7 +98,21 @@ return {
             "bun.lockb"
           ),
           settings = {
+            complete_function_calls = true,
+            vtsls = {
+              autoUseWorkspaceTsdk = true,
+              experimental = {
+                completion = {
+                  enableServerSideFuzzyMatch = true,
+                },
+              },
+            },
             typescript = {
+              updateImportOnFileMove = { enabled = "always" },
+              suggest = { completeFunctionCalls = true },
+              preferences = {
+                includePackageJsonAutoImports = "on",
+              },
               inlayHints = {
                 enumMemberValues = { enabled = true },
                 functionLikeReturnTypes = { enabled = true },
@@ -104,6 +120,21 @@ return {
                 parameterNames = { enabled = "all" },
                 propertyDeclarationTypes = { enabled = true },
                 variableTypes = { enabled = true },
+              },
+              tsserver = {
+                maxTsServerMemory = 12288,
+              },
+            },
+            javascript = {
+              updateImportOnFileMove = { enabled = "always" },
+              suggest = { completeFunctionCalls = true },
+              inlayHints = {
+                enumMemberValues = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                functionParameterTypes = { enabled = true },
+                parameterNames = { enabled = "all" },
+                propertyDeclarationTypes = { enabled = true },
+                variableTypes = { enabled = false },
               },
             },
           },
@@ -257,17 +288,7 @@ return {
         -- Skip ESLint LSP - using nvim-lint instead
         if name ~= "eslint" then
           config.capabilities = capabilities
-
-          local base_on_attach = config.on_attach or on_attach
-          if name == "tsgo" then
-            config.on_attach = function(client, bufnr)
-              client.server_capabilities.documentFormattingProvider = false
-              base_on_attach(client, bufnr)
-            end
-          else
-            config.on_attach = base_on_attach
-          end
-
+          config.on_attach = config.on_attach or on_attach
           lspconfig[name].setup(config)
         end
       end
